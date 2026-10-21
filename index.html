@@ -185,13 +185,17 @@ footer{display:flex;flex-direction:column;min-height:clamp(300px,19vw,420px);mar
   .about .t{grid-column:1/-1;grid-row:1;margin-left:var(--card-col);margin-right:var(--text-gap);margin-top:calc(-1 * var(--text-shift));margin-bottom:var(--text-shift)}
   #ueber{padding-bottom:0}
 }
-@media (max-width:820px){
-  :root{--tx:9vw}
-  .hero{--gx:9vw;--shift:0px;--cs:0px}
+@media (max-width:820px), (max-height:500px) and (orientation:landscape){
+  :root{--tx:9vmin}
+  .hero{--gx:9vmin;--shift:0px;--cs:0px}
   .about h2,.about .t,.about .ph{grid-column:1/-1}
   .about .ph{aspect-ratio:4/5;margin-bottom:28px}
-  .pl{font-size:8.6vw}
+  .pl{font-size:8.6vmin}
   .ov{margin-top:0}
+}
+@media (max-height:500px) and (orientation:landscape){
+  .hero{padding-top:28px}
+  footer{margin-top:60px}
 }
 /* Platzhalter wachsen von ihrer Unterkante nach oben (Easy Ease) */
 .card.rv{clip-path:inset(100% 0 0 0);transition:clip-path 1s cubic-bezier(.65,0,.35,1) var(--d,0ms);will-change:clip-path}
