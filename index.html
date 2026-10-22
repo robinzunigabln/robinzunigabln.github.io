@@ -216,8 +216,11 @@ footer{display:flex;flex-direction:column;min-height:clamp(300px,19vw,420px);mar
   footer{margin-top:60px}
 }
 /* Platzhalter wachsen von ihrer Unterkante nach oben (Easy Ease) */
-.card.rv{clip-path:inset(100% 0 0 0);transition:clip-path 1s cubic-bezier(.65,0,.35,1) var(--d,0ms);will-change:clip-path}
+.card.rv{clip-path:inset(100% 0 0 0);transition:clip-path 1s cubic-bezier(.65,0,.35,1) var(--d,0ms)}
 .card.rv.in{clip-path:inset(0)}
+/* Nach dem Einblenden kein Clip mehr auf der Karte: verschachtelte clip-path-Ebenen (Karte + Hover-Fläche) werden in Firefox
+   mit Grafikbeschleunigung nicht immer neu gezeichnet – die graue Hover-Fläche blieb dann unsichtbar. */
+.card.rv.in.done{clip-path:none;transition:none}
 @media (prefers-reduced-motion:reduce){.card.rv{clip-path:none;transition:none}.dot::before,.dot::after{animation:none}*{transition:none!important;scroll-behavior:auto}.h h2{clip-path:none}}
 </style>
 </head>
@@ -476,9 +479,10 @@ footer{display:flex;flex-direction:column;min-height:clamp(300px,19vw,420px);mar
   const cio=new IntersectionObserver(es=>{
     const vis=es.filter(e=>e.intersectionRatio>=.12).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top||a.boundingClientRect.left-b.boundingClientRect.left);
     vis.forEach((e,i)=>{const c=e.target.querySelector('.card');c.style.setProperty('--d',i*110+'ms');c.classList.add('in')});
-    es.forEach(e=>{if(e.intersectionRatio===0){const c=e.target.querySelector('.card');c.style.setProperty('--d','0ms');c.classList.remove('in')}})},
+    es.forEach(e=>{if(e.intersectionRatio===0){const c=e.target.querySelector('.card');c.style.setProperty('--d','0ms');c.classList.remove('in','done')}})},
     {threshold:[0,.12],rootMargin:'0px 0px -6% 0px'});
-  $('.it').forEach(it=>{it.querySelector('.card').classList.add('rv');cio.observe(it)});
+  $('.it').forEach(it=>{const c=it.querySelector('.card');c.classList.add('rv');cio.observe(it);
+    c.addEventListener('transitionend',e=>{if(e.target===c&&e.propertyName==='clip-path'&&c.classList.contains('in'))c.classList.add('done')})});
 
   // Video-Slots
   $('.vid').forEach(v=>{
