@@ -66,7 +66,7 @@ section{padding:var(--sp) 0}
 
 .strip{display:flex;gap:var(--pad);overflow-x:auto;padding:20px var(--pad) 24px;scroll-snap-type:x mandatory;scroll-padding-left:var(--pad);scrollbar-width:none;cursor:grab}
 .ov{margin-top:-200px}
-.strip.s3{gap:calc(clamp(10px,1.4vw,20px) - 8px)}
+.strip.s3{gap:calc(clamp(10px,1.4vw,20px) - 8px);justify-content:safe center}
 .strip.s3{gap:calc((clamp(10px,1.4vw,20px) - 10px) * 1.22)}
 .strip.s3 .it{flex:0 0 min(88.5vw,521px)}
 .strip::-webkit-scrollbar{display:none}
@@ -133,10 +133,10 @@ section{padding:var(--sp) 0}
 .vid{cursor:pointer;place-items:center}
 .vid span{position:absolute;left:12px;bottom:12px}.pt b{display:block;margin-bottom:4px;font:800 1.15rem/1.2 var(--hd)}
 .card.mg .pt b,.card.gr .pt b,.card.ms .pt b{font-family:var(--bd);font-weight:300}
-#av .strip{gap:calc(var(--pad) * 0.3)}
+#av .strip{gap:calc(var(--pad) * 0.3);justify-content:safe center}
 #av .it.w{flex:0 0 min(79.2vw,699px)}
 #av .pt b{font-family:var(--bd);font-weight:300}
-#ki .strip.s2{gap:calc(var(--pad) * 0.3);padding-left:var(--pad)}
+#ki .strip.s2{gap:calc(var(--pad) * 0.3);padding-left:var(--pad);justify-content:safe center}
 /* Zentrierte Streifen: zentriert, solange alles passt; bei Überbreite startet der Inhalt links und JS scrollt
    ihn mittig – so bleibt das Bild gleich, aber jede Karte ist erreichbar (Firefox, Chrome, Safari, mobil). */
 .strip.s3>.it:first-child,#av .strip>.it:first-child,#ki .strip.s2>.it:first-child{margin-left:auto}
@@ -482,7 +482,11 @@ footer{display:flex;flex-direction:column;min-height:clamp(300px,19vw,420px);mar
     es.forEach(e=>{if(e.intersectionRatio===0){const c=e.target.querySelector('.card');c.style.setProperty('--d','0ms');c.classList.remove('in','done')}})},
     {threshold:[0,.12],rootMargin:'0px 0px -6% 0px'});
   $('.it').forEach(it=>{const c=it.querySelector('.card');c.classList.add('rv');cio.observe(it);
-    c.addEventListener('transitionend',e=>{if(e.target===c&&e.propertyName==='clip-path'&&c.classList.contains('in'))c.classList.add('done')})});
+    const mkDone=()=>{if(c.classList.contains('in'))c.classList.add('done')};
+    c.addEventListener('transitionend',e=>{if(e.target===c&&e.propertyName==='clip-path')mkDone()});
+    // Manche Browser (v. a. Firefox) feuern kein transitionend, wenn die Karte beim Laden bereits sichtbar ist
+    // und kein echter Übergang gemalt wird – ohne dieses Netz bliebe der Hover-Layer dauerhaft kaputt.
+    setTimeout(mkDone,700)});
 
   // Video-Slots
   $('.vid').forEach(v=>{
