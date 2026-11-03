@@ -1,573 +1,933 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Robinson Zuñiga – Grafikdesign, Audiovisuals, KI-Mediengestaltung</title>
-<meta name="description" content="Portfolio von Robinson Zuñiga, Grafik-Designer in Berlin.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;800;900&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Robin Zuñiga Portfolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Robin Zuñiga – Grafikdesign, Audiovisuals, KI-Mediengestaltung. Berlin.">
+<!-- Fuentes alojadas localmente (sin conexión a Google · DSGVO). Licencia: SIL OFL, ver /fonts -->
+<link rel="preload" href="fonts/space-grotesk-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-/* Palette: Pink E63073, Blaugrau B8C8CF, Midnight Ink 10131F (ersetzt Blassgrün).
-   --ink = dunkles Weinrot, aus dem Pink abgeleitet (für Text auf hellen Flächen). */
+@font-face{font-family:"Space Grotesk";src:url("fonts/space-grotesk-var.woff2") format("woff2");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"IBM Plex Sans";src:url("fonts/ibm-plex-sans-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"IBM Plex Sans";src:url("fonts/ibm-plex-sans-500.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"IBM Plex Sans";src:url("fonts/ibm-plex-sans-600.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+</style>
+<style>
+/* =========================================================
+   TOKENS — valores PROVISORIOS. Cambiar solo aquí.
+   Layout: grid de 12 columnas, 5 bandas de 720px,
+   fondo alternado claro/oscuro, acentos neón en líneas cortas.
+   ========================================================= */
 :root{
-  --m:#E63073; --c:#B8C8CF; --g:#10131F; --o:#E63073; --ink:#4A0F26; --tint:#10131F;
-  --hd:'Libre Franklin','Helvetica Neue',Arial,sans-serif; --bd:'Space Grotesk','Helvetica Neue',Arial,sans-serif;
-  --tx:calc(5.5vw + min(100px,8vw));--li:max(11px,calc(clamp(1rem,2.2vw,1.6rem) - 8pt));--pad:clamp(16px,3.2vw,48px);--ar:calc(clamp(1.4rem,3.4vw,2.6rem) - 8pt);--sp:clamp(64px,9vw,128px);
+  /* Color */
+  --c-light:        #F2F1F2;   /* fondo claro */
+  --c-dark:         #F2F1F2;   /* secciones 2 y 4 + lightboxes: ahora también blanco */
+  --c-ink-light:    #151718;   /* texto · contraste 16:1 */
+  --c-ink-dark:     #151718;
+  --c-muted-light:  #59625F;   /* texto secundario · 5,6:1 */
+  --c-muted-dark:   #59625F;
+  --c-media-light:  #E2E5E3;   /* placeholder de media */
+  --c-media-dark:   #E2E5E3;
+  --c-sage:         #7B938E;   /* verde guardado para uso futuro (no se usa ahora) */
+  --c-overlay:      rgba(112,116,119,.9); /* hover gris */
+  --c-overlay-ink:  #FFFFFF;
+  --c-accent:       #FF2BD6;   /* neón (solo líneas cortas) */
+
+  /* Tipografía */
+  --font-display: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body:    "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;   /* párrafos, contenedores, header, footer */
+  --font-mono:    "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;   /* labels pequeños (misma fuente) */
+  --font-glyph:   ui-monospace, "SF Mono", Menlo, Consolas, monospace;               /* solo símbolos de la animación IA */
+  --display-wdth: 100;          /* sin efecto con Space Grotesk (no tiene eje de ancho) */
+  --display-wght: 700;          /* Space Grotesk: 300–700 */
+  --display-case: none;         /* altas y bajas */
+  --display-track: -.025em;
+  /* Regla tipográfica: títulos y claim = Space Grotesk · todo lo demás = IBM Plex Sans */
+
+  /* Layout */
+  --section-h: 720px;
+  --topbar-h: 64px;          /* alto del header fijo */
+  --topbar-shadow: 0 1px 2px rgba(21,23,24,.04), 0 6px 13px rgba(21,23,24,.06);   /* sombra delicada del header (13 px) */
+  --topbar-shadow-off: 0 1px 2px rgba(21,23,24,0), 0 6px 13px rgba(21,23,24,0);
+  --gutter: clamp(16px, 4vw, 56px);
+  --pad-l: max(var(--gutter), env(safe-area-inset-left, 0px));
+  --pad-r: max(var(--gutter), env(safe-area-inset-right, 0px));
+  --pad-y: clamp(36px, 5.5vw, 64px);
+  --max-w: 1280px;
+  --gap: clamp(12px, 2vw, 24px);
+
+  /* Animación */
+  --ease:          cubic-bezier(.65, 0, .35, 1);   /* ease-in-out */
+  --ease-soft:     cubic-bezier(.45, 0, .25, 1);
+  --dur-reveal:    1s;
+  --dur-hover:     .45s;
+  --reveal-y:      48px;    /* recorrido hacia arriba de textos y contenedores */
+  --stagger:       .1s;
+  --dur-lb:        .5s;     /* apertura/cierre del lightbox */
+  --parallax:      .08;     /* intensidad del parallax */
+
+  color-scheme: light;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
-body{font:400 1rem/1.65 var(--bd);background:#fff;color:var(--ink);overflow-x:hidden;width:100%}
+
+/* ---------- Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  margin:0; background:var(--c-light); color:var(--c-ink-light);
+  font:400 16px/1.5 var(--font-body);
+  -webkit-font-smoothing:antialiased; overflow-x:clip;
+}
+img,video{display:block;max-width:100%}
 a{color:inherit}
-:focus-visible{outline:3px solid var(--o);outline-offset:3px}
-.on-g{background:#fff;color:var(--g);--o:var(--m);--ov:rgba(184,200,207,.07);--ln:rgba(184,200,207,.3);--pb:var(--c);--pc:var(--g)}
-.on-c{background:#fff;color:var(--ink);--o:var(--m);--ov:rgba(74,15,38,.10);--ln:rgba(74,15,38,.35);--pb:var(--ink);--pc:var(--c)}
-.on-w{background:#fff;color:var(--g);--o:var(--m);--ov:rgba(16,19,31,.05);--ln:rgba(16,19,31,.3);--pb:var(--g);--pc:#fff}
-.on-m{background:var(--m);color:var(--g);--o:var(--g);--ov:rgba(16,19,31,.10);--ln:rgba(16,19,31,.4);--pb:var(--ink);--pc:var(--c)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--c-accent);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.lang{position:fixed;top:12px;right:calc(var(--pad) + 6px);z-index:30;color:var(--ink);font:400 .8rem var(--bd)}
-.lang.tt{color:var(--tint)}
-.lang.lt{color:var(--c)}
-.lang button{background:none;border:0;color:inherit;font:400 .8rem var(--bd);cursor:pointer;padding:4px}
-.lang button:hover{opacity:.6}
-.lang button[aria-pressed=true]{text-decoration:underline;text-underline-offset:4px}
-@media (pointer:coarse){.lang button{position:relative}.lang button::after{content:"";position:absolute;inset:-10px -4px}}
-
-/* Hero: zwei Druckplatten */
-.hero{--shift:min(100px,8vw);--cs:28px;--gx:5.5vw;--sz:calc(clamp(1.3rem,3.2vw,2.8rem) - 8pt);--cz:calc(var(--sz) + 3pt);--ms:max(8vw,calc(var(--gx) + var(--shift) - 16px));--wz:min(14pt,var(--cz));--wg:1.1vw;--cl:calc(var(--gx) + var(--shift) - 14px - var(--cs) - var(--cz));position:relative;isolation:isolate;overflow:hidden;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:72px var(--pad) calc(var(--pad) + 28px + var(--sz));background:var(--m)}
-.field{position:absolute;inset:0;background:var(--c);transform:translate3d(92%,0,0);will-change:transform;z-index:-2;pointer-events:none}
-.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;opacity:.5;z-index:-1}
-.hero-fade{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;will-change:opacity}
-.dot{position:absolute;left:0;top:16.3%;width:46px;height:46px;margin:-23px 0 0 -23px;border:12px solid transparent;border-radius:50%;background:none;box-shadow:inset 0 0 0 2px var(--ink);transform:translate3d(92vw,0,0);will-change:transform;z-index:5;cursor:ew-resize;touch-action:none}
-.dot::before,.dot::after{content:"";position:absolute;top:50%;width:9px;height:9px;border:0 solid var(--ink)}
-.dot::before{right:calc(100% + 9px);border-width:0 0 2px 2px;transform:translateY(-50%) rotate(45deg);animation:nl 1.4s ease-in-out 1s 3}
-.dot::after{left:calc(100% + 9px);border-width:2px 2px 0 0;transform:translateY(-50%) rotate(45deg);animation:nr 1.4s ease-in-out 1s 3}
-@keyframes nl{50%{transform:translate(-6px,-50%) rotate(45deg)}}
-@keyframes nr{50%{transform:translate(6px,-50%) rotate(45deg)}}
-.plates{position:relative;user-select:none}
-.plates.tr{position:absolute;left:0;top:0;width:100%;pointer-events:none}
-.pl{display:block;width:100%;font:500 8.3vw/.95 var(--bd);text-transform:none;letter-spacing:-.04em;white-space:nowrap;mix-blend-mode:multiply;will-change:transform}
-.pl.c{color:var(--c)}
-.pl.m{position:absolute;left:0;top:0;color:var(--m)}
-.bl{display:inline-block;width:0;height:0}
-.hg{position:relative;margin-left:calc(var(--gx) - var(--pad) + var(--shift))}
-.stamp{position:absolute;right:calc(100% + 14px + var(--cs,0px));bottom:var(--bl,0px);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;color:#fff;font:400 var(--cz)/1 var(--bd);letter-spacing:-.02em}
-.who{position:absolute;left:0;bottom:calc(100% + var(--wg));z-index:6;margin:0;font:400 var(--wz)/1.15 var(--bd);letter-spacing:-.02em;white-space:nowrap;pointer-events:none}
-.who .w1{display:block;color:#fff;clip-path:inset(0 0 0 100%)}
-.who .w2{display:none}
-
-/* Sektionen */
-section{padding:var(--sp) 0}
-.h{padding:0 var(--pad);margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
-.h h2{font:900 clamp(2.4rem,8vw,7.5rem)/.92 var(--hd);letter-spacing:-.045em;clip-path:inset(-.1em 101% -.2em 0);transition:clip-path .9s steps(9)}
-.h.in h2{clip-path:inset(-.1em -1% -.2em 0)}
-.h p{max-width:34ch;font-size:.95rem}
-
-.strip{display:flex;gap:var(--pad);overflow-x:auto;padding:20px var(--pad) 24px;scroll-snap-type:x mandatory;scroll-padding-left:var(--pad);scrollbar-width:none;cursor:grab}
-.ov{margin-top:-200px}
-.strip.s3{gap:calc(clamp(10px,1.4vw,20px) - 8px);justify-content:safe center}
-.strip.s3{gap:calc((clamp(10px,1.4vw,20px) - 10px) * 1.22)}
-.strip.s3 .it{flex:0 0 min(88.5vw,521px)}
-.strip::-webkit-scrollbar{display:none}
-.strip img,.strip a{-webkit-user-drag:none}
-.strip.drag{cursor:grabbing;scroll-snap-type:none;user-select:none}
-.it{position:relative;flex:0 0 min(92vw,541px);scroll-snap-align:start}
-.it.w{flex-basis:min(99vw,874px)}
-.card{position:relative;overflow:hidden;aspect-ratio:4/3;background:repeating-linear-gradient(135deg,transparent 0 10px,var(--ln) 10px 11px),var(--ov);display:grid;place-items:end start;padding:12px;font-size:.8rem;--pb:var(--c);--pc:#fff}
-.w .card{aspect-ratio:16/9}
-.card .cv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.card.mg{--pb:var(--c);--pc:#fff;cursor:pointer}
-.card.gr{--pb:var(--c);--pc:#fff;cursor:pointer}
-.card.ms{--pb:var(--c);--pc:#fff;cursor:pointer}
-.lb{position:fixed;inset:0;background:#fff;z-index:1000;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:28px 24px 64px;opacity:0;pointer-events:none;transition:opacity .3s ease}
-.lb.open{opacity:1;pointer-events:auto}
-.lb-x{position:fixed;top:20px;right:20px;width:44px;height:44px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--g);z-index:1001}
-.lb-x svg{width:22px;height:22px}
-.lb-stack{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:78px}
-.lb-item{width:100%;aspect-ratio:4/3;position:relative;overflow:hidden;background:repeating-linear-gradient(135deg,transparent 0 10px,rgba(16,19,31,.14) 10px 11px),rgba(16,19,31,.04)}
-.lb-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.lb-end{position:relative}
-.lb-credit{display:flex;justify-content:center;align-items:center;gap:14px;max-width:1000px;margin:32px auto 0;padding-top:24px;border-top:1px solid rgba(16,19,31,.12);color:rgba(16,19,31,.5);font:400 10pt var(--bd)}
-.lb-credit a{color:inherit;text-decoration:none}
-.lb-credit a:hover{opacity:.65}
-.lb-credit .sep{display:block;width:1px;height:1.1em;background:rgba(16,19,31,.28)}
-.lb-credit .li-ic{display:block;width:1.15em;height:1.15em}
-.lb-up{position:absolute;top:50%;left:100%;transform:translateY(-50%);margin-left:124px;display:grid;place-items:center;width:52px;height:52px;flex:none;padding:0;background:none;border:1px solid rgba(16,19,31,.3);border-radius:50%;cursor:pointer;color:#10131F;transition:transform .3s,border-color .3s}
-.lb-up:hover{transform:translateY(calc(-50% - 6px));border-color:#10131F}
-.lb-up svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
-@media (max-width:1399px){.lb-up{position:relative;top:auto;left:auto;transform:none;margin:32px auto 0}.lb-up:hover{transform:translateY(-6px)}}
-/* Spiel-Ebene: das Spiel öffnet auf der Portfolio-Seite selbst, damit Musik und Video sofort mit Ton starten dürfen */
-.gm{position:fixed;inset:0;z-index:1000;background:#fff;opacity:0;pointer-events:none;transition:opacity .3s ease}
-.gm.open{opacity:1;pointer-events:auto}
-.gm iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
-.gm-x{position:absolute;top:16px;right:16px;z-index:2;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid rgba(16,19,31,.22);border-radius:50%;background:rgba(255,255,255,.92);color:#10131F;cursor:pointer;transition:border-color .3s}
-.gm-x:hover{border-color:#10131F}
-.gm-x svg{width:20px;height:20px}
-.lb-doc{max-width:640px;margin:48px auto 0;font:400 1rem/1.6 var(--bd);color:var(--g)}
-.lb-doc h2{font:900 clamp(2rem,5vw,3.2rem)/1 var(--hd);letter-spacing:-.03em;margin:0 0 8px}
-.lb-doc h3{font:800 1rem var(--hd);margin:36px 0 10px}
-.lb-doc p{margin:0 0 4px}
-.lb-doc .lb-sub{color:rgba(16,19,31,.55);font-size:.85rem;margin-bottom:32px}
-.lb-doc a{text-decoration:underline;text-underline-offset:.2em}
-.lb-doc a:hover{opacity:.7}
-.sld{position:relative;width:min(1333px,calc(100% - 48px));aspect-ratio:16/9;margin:0 auto;overflow:hidden;background:#fff}
-.sld-track{display:flex;width:100%;height:100%;transition:transform .6s cubic-bezier(.65,0,.35,1)}
-.sld-slide{flex:none;width:100%;height:100%;position:relative;overflow:hidden;background:repeating-linear-gradient(135deg,transparent 0 10px,rgba(16,19,31,.14) 10px 11px),rgba(16,19,31,.04)}
-.sld-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.sld-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
-.sld-nav{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;margin:0;padding:0;background:rgba(255,255,255,.88);border:1px solid rgba(16,19,31,.22);border-radius:50%;cursor:pointer;color:#10131F;transition:transform .3s,border-color .3s,opacity .3s}
-.sld-nav:hover{border-color:#10131F}
-.sld-nav svg{width:18px;height:18px}
-.sld-nav.prev{left:16px}
-.sld-nav.next{right:16px}
-.sld-nav:disabled{opacity:.25;cursor:default}
-.sld-dots{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:9px}
-.sld-dots button{width:6px;height:6px;padding:0;margin:0;border:none;border-radius:50%;background:rgba(16,19,31,.22);cursor:pointer;transition:background .25s,transform .25s}
-.sld-dots button[aria-current="true"]{background:#10131F;transform:scale(1.5)}
-.pt{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(74,15,38,.8);background:color-mix(in srgb,var(--pb) 80%,transparent);color:var(--pc);font-size:.92rem;clip-path:inset(100% 0 0 0);transition:clip-path .55s cubic-bezier(.7,0,.2,1)}
-.card:hover .pt,.card:focus-visible .pt{clip-path:inset(0)}
-@media (any-hover:none) and (any-pointer:coarse){.pt{clip-path:inset(64% 0 0 0)}}
-.cap{display:flex;justify-content:space-between;gap:12px;padding-top:10px;font-size:.82rem}
-.cap b{font:800 1.05rem/1.2 var(--hd);letter-spacing:-.01em}
-.vid{cursor:pointer;place-items:center}
-.vid span{position:absolute;left:12px;bottom:12px}.pt b{display:block;margin-bottom:4px;font:800 1.15rem/1.2 var(--hd)}
-.card.mg .pt b,.card.gr .pt b,.card.ms .pt b{font-family:var(--bd);font-weight:300}
-#av .strip{gap:calc(var(--pad) * 0.3);justify-content:safe center}
-#av .it.w{flex:0 0 min(79.2vw,699px)}
-#av .pt b{font-family:var(--bd);font-weight:300}
-#ki .strip.s2{gap:calc(var(--pad) * 0.3);padding-left:var(--pad);justify-content:safe center}
-/* Zentrierte Streifen: zentriert, solange alles passt; bei Überbreite startet der Inhalt links und JS scrollt
-   ihn mittig – so bleibt das Bild gleich, aber jede Karte ist erreichbar (Firefox, Chrome, Safari, mobil). */
-.strip.s3>.it:first-child,#av .strip>.it:first-child,#ki .strip.s2>.it:first-child{margin-left:auto}
-.strip.s3>.it:last-child,#av .strip>.it:last-child,#ki .strip.s2>.it:last-child{margin-right:auto}
-/* Einrastpunkte für die Mittelstellung: mittlere Karte (3er-Streifen) bzw. Mitte der Lücke (2er-Streifen) */
-.strip.s3,#av .strip,#ki .strip.s2{scroll-padding-right:var(--pad)}
-.strip.s3>.it{scroll-snap-align:center}
-#av .strip>.it:first-child::after,#ki .strip.s2>.it:first-child::after{content:"";position:absolute;top:0;right:calc(var(--pad) * -0.15 - .5px);width:1px;height:1px;scroll-snap-align:center;pointer-events:none}
-#ki .strip.s2 .it{flex:0 0 min(79.2vw,699px)}
-#ki .card{aspect-ratio:16/9}
-#ki .pt b{font-family:var(--bd);font-weight:300}
-.vid .pt{z-index:2}
-.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-
-
-/* Über
-   --card-col  : wide-card rhythm reused from .it.w, so the photo lines up with the project strips above
-   --photo-scale: desktop photo width = (--pad + --card-col) * --photo-scale
-   --text-gap  : horizontal gap between photo and text column (desktop only)
-   --text-shift: vertical offset that centers the text block against the photo's height
-                 (equal parts negative margin-top / positive margin-bottom so the
-                 photo/row height stays unchanged — see @media (min-width:1280px) below) */
-.about{--card-col:min(99vw,874px);--photo-scale:0.68;--text-gap:200px;--text-shift:-98.5px;
-  position:relative;display:grid;grid-template-columns:repeat(12,1fr);gap:24px;padding:0 var(--pad)}
-.about h2{grid-column:1/5;font:900 clamp(2.4rem,7vw,6rem)/.92 var(--hd);letter-spacing:-.045em}
-.about .ph{display:block;position:relative;grid-column:1/5;align-self:start;width:100%;aspect-ratio:3/4;overflow:hidden}
-.about .ph img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 22%}
-.about .ph-credit{position:absolute;left:0;bottom:0;width:38%;height:6%;min-height:17px;cursor:pointer;outline-offset:-2px}
-.about .ph-credit:hover,.about .ph-credit:focus-visible{background:rgba(255,255,255,.1)}
-.about .t{grid-column:5/13}
-.lead{font:400 calc(clamp(1.15rem,2.1vw,1.7rem) - 4pt)/1.8 var(--bd);max-width:36em}
-dl{margin-top:36px;display:grid;grid-template-columns:120px 1fr}
-dt,dd{padding:12px 0;border-top:1px solid var(--ln);font-size:.92rem}
-dt{font:800 .95rem var(--hd)}dd em{font-style:normal;font-weight:400}
-.aw{margin-top:32px;display:flex;flex-wrap:wrap;gap:10px}
-.aw span{border:2px solid var(--o);padding:6px 12px;font-size:.82rem}
-
-details{padding:0}
-summary{list-style:none;cursor:pointer;padding:0 var(--pad) 0 var(--tx);font:800 var(--li)/1.1 var(--hd);letter-spacing:-.03em;display:flex;justify-content:space-between;align-items:center}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";color:var(--o);font-size:1.3em;font-weight:300;line-height:1}
-details[open] summary::after{content:"–"}
-details .strip{margin-top:24px}
-
-footer.on-m{color:#fff;--o:#fff}
-footer .up{color:#fff}
-footer{display:flex;flex-direction:column;min-height:clamp(300px,19vw,420px);margin-top:200px;padding:calc(var(--pad) + 22px) var(--pad) var(--pad) var(--tx)}
-.mr{display:flex;justify-content:flex-end;align-items:center;gap:16px;margin:auto 0}
-.end{margin:0 0 0 calc(var(--pad) - var(--tx));display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;gap:16px}
-.end span,.end .li,.end .ct{font:400 var(--li)/1.2 var(--bd)}
-.end span{grid-column:2;text-align:center}
-.lnk{grid-column:1;justify-self:start;display:flex;align-items:center;gap:14px;padding-left:calc(var(--tx) - var(--pad))}
-.lnk .li-ic{display:block;width:calc(var(--li)*1.15);height:calc(var(--li)*1.15)}
-.end .li,.end .ct{text-underline-offset:.2em}
-.sep{display:block;width:1px;height:calc(var(--li)*1.1);background:rgba(255,255,255,.55)}
-@media (max-width:600px){.end{grid-template-columns:1fr;justify-items:center}.end span{grid-column:1;justify-self:center}.end .lnk{grid-column:1;justify-self:center;padding-left:0;order:2}.strip.s3,#av .strip,#ki .strip.s2{flex-direction:column;scroll-snap-type:none;cursor:default;gap:24px}.strip.s3 .it,#av .it.w,#ki .strip.s2 .it{flex:1 1 auto;width:100%;scroll-snap-align:none}.strip.s3>.it:first-child,#av .strip>.it:first-child,#ki .strip.s2>.it:first-child{margin-left:0}.strip.s3>.it:last-child,#av .strip>.it:last-child,#ki .strip.s2>.it:last-child{margin-right:0}}
-.up{display:grid;place-items:center;width:52px;height:52px;flex:none;margin:0;padding:0;background:none;border:1px solid rgba(255,255,255,.5);border-radius:50%;cursor:pointer;color:var(--tint);transition:transform .3s,border-color .3s}
-.up:hover{transform:translateY(-6px);border-color:#fff}
-.up svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:square}
-
-@media (min-width:1280px){
-  .about .ph{grid-column:1/-1;grid-row:1;align-self:start;width:calc((var(--pad) + var(--card-col)) * var(--photo-scale));aspect-ratio:auto;margin-left:calc(-1 * var(--pad));margin-top:calc(-1 * var(--sp));margin-bottom:0}
-  .about .ph img{height:auto;object-fit:initial}
-  .about .t{grid-column:1/-1;grid-row:1;margin-left:var(--card-col);margin-right:var(--text-gap);width:max(360px,calc(100% - var(--card-col) - var(--text-gap)));margin-top:calc(-1 * var(--text-shift));margin-bottom:var(--text-shift)}
-  #ueber{padding-bottom:0}
+/* ---------- Bandas (secciones) ---------- */
+.band{
+  position:relative; height:var(--section-h); overflow-x:clip;
+  background:var(--bg); color:var(--fg);
 }
-@media (max-width:820px), (max-height:500px) and (orientation:landscape){
-  :root{--tx:9vmin}
-  .hero{--gx:9vmin;--shift:0px;--cs:0px}
-  .about h2,.about .t,.about .ph{grid-column:1/-1}
-  .about .ph{aspect-ratio:4/5;margin-bottom:28px}
-  .pl{font-size:8.6vmin}
-  .ov{margin-top:0}
+.band--light{--bg:var(--c-light);--fg:var(--c-ink-light);--muted:var(--c-muted-light);--media:var(--c-media-light)}
+.band--dark {--bg:var(--c-dark); --fg:var(--c-ink-dark); --muted:var(--c-muted-dark); --media:var(--c-media-dark)}
+.wrap{
+  height:100%; max-width:var(--max-w); margin-inline:auto;
+  padding-left:var(--pad-l); padding-right:var(--pad-r); padding-block:var(--pad-y);
+  display:flex; flex-direction:column;
 }
-@media (max-height:500px) and (orientation:landscape){
-  .hero{padding-top:28px}
-  footer{margin-top:60px}
+
+/* ---------- Elementos tipográficos comunes ---------- */
+.label{
+  display:inline-flex; align-items:center; gap:12px;
+  font:500 13px/1.2 var(--font-mono); letter-spacing:.01em;
+  color:var(--muted);
 }
-/* Platzhalter wachsen von ihrer Unterkante nach oben (Easy Ease) */
-.card.rv{clip-path:inset(100% 0 0 0);transition:clip-path 1s cubic-bezier(.65,0,.35,1) var(--d,0ms)}
-.card.rv.in{clip-path:inset(0)}
-/* Nach dem Einblenden kein Clip mehr auf der Karte: verschachtelte clip-path-Ebenen (Karte + Hover-Fläche) werden in Firefox
-   mit Grafikbeschleunigung nicht immer neu gezeichnet – die graue Hover-Fläche blieb dann unsichtbar. */
-.card.rv.in.done{clip-path:none;transition:none}
-@media (prefers-reduced-motion:reduce){.card.rv{clip-path:none;transition:none}.dot::before,.dot::after{animation:none}*{transition:none!important;scroll-behavior:auto}.h h2{clip-path:none}}
+.label::before{content:"";width:24px;height:2px;background:var(--c-accent);flex:none}
+.label b{font:600 13px/1 var(--font-body);letter-spacing:0;color:var(--muted)}
+
+.head{ /* bloque de 4 líneas, arriba al centro */
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
+}
+.head .label{margin-bottom:8px}
+.head h2{
+  margin:0; font-family:var(--font-display);
+  font-variation-settings:"wdth" var(--display-wdth); font-weight:var(--display-wght);
+  font-size:clamp(22px, 3.2vw, 38px); line-height:1.05; letter-spacing:var(--display-track); text-transform:var(--display-case); text-wrap:balance;
+}
+.head p{margin:0;max-width:none;color:var(--muted);font-size:clamp(14px,1.3vw,16px);line-height:1.45;text-align:center;text-wrap:balance}
+@media (min-width:900px){.head p{white-space:nowrap}}   /* una sola línea en desktop */
+
+/* ---------- Selector de idioma (fijo) ---------- */
+/* Header fijo: mismo gris que el fondo; DE/EN centrado en su alto */
+.topbar{
+  position:sticky; top:env(safe-area-inset-top, 0px); z-index:50;
+  height:var(--topbar-h); display:flex; align-items:center; justify-content:flex-end;
+  padding-left:var(--pad-l); padding-right:var(--pad-r); background:var(--c-light);
+  box-shadow:var(--topbar-shadow-off); transition:box-shadow var(--dur-hover) var(--ease);
+}
+/* La sombra aparece cuando el Hero está oculto en un 80 % (ver JS) */
+.topbar.is-shadow{box-shadow:var(--topbar-shadow)}
+/* Nombre en el header: aparece junto con la sombra, alineado al borde izquierdo de los contenedores de la 03 */
+.topbar__brand{
+  position:absolute; top:50%; left:max(var(--pad-l), calc((100% - 1508px) / 2));
+  max-width:calc(100% - var(--pad-l) - var(--pad-r) - 104px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  font:500 13px/1.2 var(--font-mono); letter-spacing:.01em; color:var(--muted, var(--c-muted-light));
+  opacity:0; transform:translateY(calc(-50% + 6px)); pointer-events:none;
+  transition:opacity var(--dur-hover) var(--ease), transform var(--dur-hover) var(--ease);
+}
+.topbar.is-shadow .topbar__brand{opacity:1; transform:translateY(-50%)}
+@media (max-width:379.98px){.topbar__brand{font-size:11px; letter-spacing:.02em}}
+@media (max-width:349.98px){.topbar__brand{font-size:10px; letter-spacing:0; max-width:calc(100% - var(--pad-l) - var(--pad-r) - 92px)}}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:51; background:var(--c-light)}
+.lang{
+  display:flex; gap:2px; margin-right:-6px;
+  color:var(--c-muted-light);   /* textos pequeños: mismo gris que los párrafos */
+}
+.lang button{
+  position:relative; background:none; border:0; cursor:pointer;
+  min-width:44px; min-height:44px; padding:0 6px;   /* área táctil 44px */
+  font:600 14px/1 var(--font-body); letter-spacing:.02em; opacity:.55;
+  transition:opacity var(--dur-hover) var(--ease);
+}
+.lang button[aria-pressed="true"]{opacity:1; color:var(--fg)}
+@media (hover:hover){.lang button:hover{opacity:1}}
+
+/* ---------- 01 Hero ----------
+   Foto + texto forman un grupo centrado. Desktop: tamaño +20 % respecto a la versión anterior. */
+/* El Hero ocupa al menos toda la pantalla: se ve completo al abrir y la sección 02 empieza fuera de vista. */
+.hero{height:max(560px, calc(100vh - var(--topbar-h))); height:max(560px, calc(100svh - var(--topbar-h)))}   /* siempre entra completo en la primera pantalla */
+@media (max-width:899.98px){
+  .hero{height:calc(100vh - var(--topbar-h)); height:calc(100svh - var(--topbar-h)); min-height:460px}   /* mobile: la pantalla menos el header */
+}
+.hero .wrap{max-width:none; justify-content:center; align-items:center}
+.hero__group{display:flex; flex-direction:column; align-items:center; gap:clamp(20px,3vw,32px); width:100%; height:100%; min-height:0}
+.hero__text{container-type:inline-size; width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; gap:clamp(14px,2vw,22px); min-width:0}
+.hero h1{
+  margin:0; font-family:var(--font-display);
+  font-variation-settings:"wdth" var(--display-wdth); font-weight:var(--display-wght);
+  font-size:24px; font-size:clamp(20px, 9.7cqi, 96px);
+  line-height:.98; letter-spacing:var(--display-track); text-transform:var(--display-case);
+}
+.hero h1 span{display:block}
+.claim__accent{color:var(--c-accent)}
+.claim{
+  margin:0; display:block;
+  font:500 clamp(16px,1.7vw,20px)/1.3 var(--font-display); letter-spacing:-.01em;
+}
+.photo{
+  position:relative; margin:0; display:flex; justify-content:center; align-items:flex-start;
+  flex:1 1 auto; min-height:0; width:84%;          /* mobile: la foto completa, ajustada al alto disponible */
+}
+.photo img{height:100%; width:auto; max-width:100%; object-fit:contain; object-position:center top}
+.ph-tag{font:500 11px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+@media (min-width:900px){
+  .hero__group{flex-direction:row; align-items:flex-end; justify-content:center; width:auto; height:auto;
+    gap:min(4.4vw, 64px)}
+  .hero__text{container-type:normal; width:auto; align-items:flex-start; text-align:left; gap:clamp(18px,2vw,26px); order:2}
+  .hero h1{font-size:min(6.2vw, 90px)}              /* +20 % */
+  .hero h1 span{white-space:nowrap}
+  .hero h1{min-width:9.76em}   /* ancho de la línea más larga (DE): sin saltos al cambiar a EN */
+  .hero .label{font-size:14px}
+  .hero .label b{font-size:16px}
+  .claim{font-size:min(1.7vw, 24px)}
+  .photo{order:1; flex:none; width:min(25vw, 362px, calc((100svh - var(--topbar-h) - 150px) * .787)); aspect-ratio:1538 / 1954}   /* foto completa en su proporción original */
+  .photo img{width:100%; height:100%}
+}
+
+/* ---------- Media (tarjetas) ---------- */
+.media{
+  position:relative; margin:0; overflow:hidden; background:var(--media);
+  max-width:100%; cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.media--43{aspect-ratio:4/3}
+.media--169{aspect-ratio:16/9}
+.media__ph{position:absolute; inset:0; display:grid; place-items:center;
+  transition:transform calc(var(--dur-hover)*2) var(--ease)}
+.media__ph > img,.media__ph > video{width:100%;height:100%;object-fit:cover}
+.media__ov{
+  position:absolute; inset:0; display:grid; place-items:center; padding:16px; text-align:center;
+  background:var(--c-overlay); color:var(--c-overlay-ink);
+  font:400 clamp(14px,1.3vw,16px)/1.45 var(--font-body); text-wrap:balance; /* misma tipografía que los párrafos, en blanco */
+  opacity:0; transition:opacity var(--dur-hover) var(--ease);
+}
+.media__ov span{transform:translateY(8px);transition:transform var(--dur-hover) var(--ease)}
+@media (hover:hover){
+  .media:hover .media__ov{opacity:1}
+  .media:hover .media__ov span{transform:none}
+  .media:hover .media__ph{transform:scale(1.03)}
+}
+.media:focus-visible .media__ov,.media.is-active .media__ov{opacity:1}
+.media:focus-visible .media__ov span,.media.is-active .media__ov span{transform:none}
+.media.is-active .media__ph{transform:scale(1.03)}
+
+/* Fila de media: centrada en el espacio restante */
+.row{
+  margin-block:auto; padding-top:clamp(24px,3.5vw,40px);
+  display:grid; gap:var(--gap); width:100%; margin-inline:auto;
+}
+/* Bloques de contenedores +30 % (antes 1168 px y 1160 px de ancho), centrados, mismo medianil (--gap).
+   Nunca más anchos que la pantalla menos los márgenes laterales. */
+.band--stack .wrap{max-width:none}
+.band--stack .head{max-width:var(--max-w); margin-inline:auto}
+.row--3{grid-template-columns:repeat(3,minmax(0,1fr)); max-width:min(1518px, 100%)}
+.row--2{grid-template-columns:repeat(2,minmax(0,1fr)); max-width:min(1508px, 100%)}
+
+/* Mobile (Android/iOS): secciones 2–4 crecen con su contenido
+   y los contenedores se apilan; se navega con scroll vertical. */
+@media (max-width:639.98px){
+  .band--stack{height:auto}
+  .band--stack .wrap{height:auto}
+  .row,.row--2,.row--3{grid-template-columns:minmax(0,1fr); max-width:none; margin-block:0}
+}
+
+/* ---------- 05 Footer ----------
+   */
+/* Alto de la 05: 400 px menos que antes (pantalla − pad-y − 742 px).
+   Nunca más baja que su contenido; al final de la página se ven las tarjetas de la 04.
+   lvh = alto con las barras de Safari ocultas. */
+.contact{display:flex; flex-direction:column; height:auto;
+  min-height:calc(100vh - var(--pad-y) - 742px); min-height:calc(100lvh - var(--pad-y) - 742px)}
+.contact .wrap{flex:1 0 auto; height:auto; width:100%}
+/* El footer se alinea al borde izquierdo del contenedor 16:9 · 01 (mismo ancho que la fila de la sección 04).
+   La flecha mantiene su posición anterior. */
+.contact .wrap{max-width:none}
+/* Flecha alineada con el texto del footer (misma posición horizontal que antes).
+   Mobile: justo encima del footer, a la derecha. Desktop: en la misma línea que los links. */
+.contact__mid{
+  display:flex; justify-content:flex-end; align-items:center; pointer-events:none;
+  flex:0 0 auto; width:100%; max-width:calc(var(--max-w) - var(--pad-l) - var(--pad-r)); margin:auto auto 16px;
+}
+.contact__mid .to-top{pointer-events:auto}
+.contact .foot{margin-top:0}
+@media (min-width:900px){
+  .contact__mid{
+    position:absolute; left:0; right:0; bottom:var(--pad-y); height:64px; margin:0 auto;
+    max-width:var(--max-w); padding-left:var(--pad-l); padding-right:var(--pad-r);
+  }
+  .contact .foot{margin-top:auto; min-height:64px}
+}
+.contact .foot{width:100%; max-width:min(1508px, 100%); margin-inline:auto}
+.to-top{
+  display:grid; place-items:center; width:64px; height:64px; padding:0; cursor:pointer;
+  border:1px solid color-mix(in srgb, currentColor 60%, transparent); border-radius:50%; background:transparent; color:var(--fg);
+  /* 200 px más a la derecha, sin pasar nunca el margen lateral de la pantalla */
+  margin-right:calc(-1 * clamp(0px, (100vw - var(--max-w)) / 2, 200px));
+  transition:background-color var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease);
+}
+.to-top svg{width:28px;height:28px;transition:transform var(--dur-hover) var(--ease)}
+@media (hover:hover){
+  .to-top:hover{background:var(--fg);color:var(--bg)}
+  .to-top:hover svg{transform:translateY(-3px)}
+}
+.foot{
+  display:grid; grid-template-columns:minmax(0,1fr); gap:20px; align-items:center;
+  font:500 clamp(14px,calc(1.3vw - 2px),16px)/1.3 var(--font-body); color:var(--muted);   /* −1,5 pt (2 px) · gris de párrafo */
+}
+.foot__links{display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px}
+.foot__links a,.foot__links button{
+  background:none; border:0; padding:6px 0; cursor:pointer; font:inherit; color:inherit;
+  text-decoration:none;
+}
+.foot__links .foot__in{text-decoration:none; display:inline-grid; place-items:center; width:44px; height:44px; margin:-10px}
+.foot__sep{width:1px; height:22px; background:color-mix(in srgb, currentColor 45%, transparent)}
+.foot__note{margin:0; position:relative; justify-self:start}
+/* Animación "decodificación IA": ciclo de 9 s (ver JS). Respeta prefers-reduced-motion. */
+.ai-anim .w{display:inline-block; white-space:nowrap}
+.ai-anim .c{display:inline-block; position:relative; transition:color .45s var(--ease), transform .45s var(--ease)}
+.ai-anim .c.s{color:transparent}
+.ai-anim .c.s::after{
+  content:attr(data-g); position:absolute; inset:0; display:grid; place-items:center;
+  color:var(--c-accent); font:500 .78em/1 var(--font-glyph);
+}
+.ai-anim .c.h{color:var(--c-accent); transform:translateY(-.14em)}
+.logo-in{display:block; width:22px; height:22px}
+@media (hover:hover){.foot__links a:hover,.foot__links button:hover{color:var(--fg)}}
+.foot__links a,.foot__links button{transition:color var(--dur-hover) var(--ease)}
+@media (min-width:900px){
+  .foot{grid-template-columns:1fr auto 1fr; column-gap:clamp(32px,4vw,64px)}
+  .foot__links{flex-wrap:nowrap; white-space:nowrap}
+  .foot__note{text-align:center; white-space:nowrap; justify-self:center}
+}
+
+/* ---------- Diálogo legal ---------- */
+.legal{
+  width:min(720px, calc(100% - 32px)); max-height:min(86vh, 860px); max-height:min(86dvh, 860px); padding:0; border:0;
+  overflow:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  background:var(--c-light); color:var(--c-ink-light);
+}
+/* × fijo arriba a la derecha mientras se hace scroll en el texto legal */
+.dlg__bar{position:sticky; top:0; z-index:1; display:flex; justify-content:flex-end; height:0}
+.dlg__bar .icon-btn{margin:8px 8px 0 0; background:var(--c-light)}
+.dlg h3{margin:12px 0 -8px; font:600 15px/1.3 var(--font-body); color:var(--c-ink-light)}
+.dlg p{font-size:15px; line-height:1.55; overflow-wrap:anywhere}
+.dlg a{color:inherit; text-decoration:none; border-bottom:1px solid currentColor}
+@media (hover:hover){.dlg a:hover{color:var(--c-ink-light)}}
+.legal-note:empty{display:none}
+.dlg:focus{outline:none}
+.dlg .legal-note{font-style:italic}
+.legal::backdrop{background:rgba(21,23,24,.6)}
+.dlg{padding:clamp(20px,4vw,40px); display:grid; gap:16px}
+.dlg h2{margin:0;font:var(--display-wght) 26px/1.1 var(--font-display);text-transform:var(--display-case);letter-spacing:var(--display-track)}
+.dlg p{margin:0;color:var(--c-muted-light)}
+.dlg .btn{justify-self:start}
+
+/* ---------- Lightbox de proyectos (sección 02) ---------- */
+.lb{
+  --bg:var(--c-dark); --fg:var(--c-ink-dark); --muted:var(--c-muted-dark); --media:var(--c-media-dark);
+  position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none;
+  margin:0; padding:0; border:0; background:var(--bg); color:var(--fg);
+  overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+}
+.lb::backdrop{background:var(--c-dark)}
+.lb[open]{animation:lb-in var(--dur-lb) var(--ease) both}
+.lb.is-closing{animation:lb-out var(--dur-lb) var(--ease) both}
+@keyframes lb-in{from{opacity:0;transform:translate3d(0,24px,0)}to{opacity:1;transform:none}}
+@keyframes lb-out{from{opacity:1;transform:none}to{opacity:0;transform:translate3d(0,24px,0)}}
+html.lb-lock{overflow:hidden}
+.lb__bar{
+  position:sticky; top:0; z-index:2; display:flex; justify-content:flex-end; pointer-events:none;
+  padding:calc(env(safe-area-inset-top, 0px) + 14px) var(--pad-r) 0 var(--pad-l);
+  max-width:var(--max-w); margin-inline:auto;
+}
+.lb__bar .icon-btn{pointer-events:auto; margin-right:-10px}
+.icon-btn{
+  display:inline-grid; place-items:center; width:44px; height:44px; padding:0; flex:none; cursor:pointer;
+  background:var(--bg); color:var(--fg); border:0; border-radius:0;
+  transition:background-color var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease);
+}
+.icon-btn svg{width:20px; height:20px; transition:transform var(--dur-hover) var(--ease)}
+.icon-btn--line{border:1px solid currentColor}
+/* Flecha del lightbox: mismo círculo que la flecha de la sección 05 */
+.lb__top{
+  display:grid; place-items:center; flex:none; width:64px; height:64px; padding:0; cursor:pointer;
+  border:1px solid color-mix(in srgb, currentColor 60%, transparent); border-radius:50%;
+  background:transparent; color:var(--fg);
+  transition:background-color var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease);
+}
+.lb__top svg{width:28px; height:28px; transition:transform var(--dur-hover) var(--ease)}
+@media (hover:hover){
+  .lb__top:hover{background:var(--fg); color:var(--bg)}
+  .lb__top:hover svg{transform:translateY(-3px)}
+}
+@media (hover:hover){
+  .icon-btn--close:hover svg{transform:rotate(90deg)}
+  .icon-btn--line:hover{background:var(--fg); color:var(--bg)}
+  .icon-btn--line:hover svg{transform:translateY(-3px)}
+}
+.lb__wrap{
+  max-width:1080px; margin-inline:auto;
+  padding-left:var(--pad-l); padding-right:var(--pad-r);
+  padding-block:clamp(16px,3vw,32px) calc(env(safe-area-inset-bottom, 0px) + clamp(40px,6vw,72px));
+  display:grid; gap:clamp(32px,5vw,56px);
+}
+.lb__head{display:grid; gap:12px; justify-items:start; min-width:0}
+.lb__head h2{
+  margin:0; font-family:var(--font-display);
+  font-variation-settings:"wdth" var(--display-wdth); font-weight:var(--display-wght);
+  font-size:clamp(26px, 4.4vw, 54px); line-height:1.02; letter-spacing:var(--display-track); text-transform:var(--display-case); text-wrap:balance;
+}
+.lb__head p{margin:0; max-width:none; color:var(--muted); font-size:clamp(15px,1.4vw,17px)}
+.lb__media{display:grid; gap:var(--gap)}
+.slot{position:relative; margin:0; max-width:100%; overflow:hidden; background:var(--media); display:grid; place-items:center}
+.slot > img,.slot > video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.slot--1610{aspect-ratio:16/10}
+.slot--11{aspect-ratio:1/1}
+.lb__foot{
+  display:grid; gap:clamp(24px,4vw,40px); padding-top:clamp(24px,4vw,40px);
+  border-top:1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+}
+.lb__thumbs{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(8px,1.5vw,16px)}
+.lb__contact{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  font:400 14px/1.4 var(--font-mono); letter-spacing:0;
+}
+.lb__id{display:flex; flex-wrap:wrap; align-items:center; gap:4px 24px; min-width:0}
+.lb__sep{width:1px; height:20px; background:color-mix(in srgb, var(--muted) 55%, transparent)}
+.lb__name{font:400 16px/1.2 var(--font-body); letter-spacing:0; color:var(--muted)}
+.lb__id .lb__mail{font:500 15px/1.3 var(--font-body); letter-spacing:0; color:var(--muted); text-decoration:none; transition:color var(--dur-hover) var(--ease)}
+@media (hover:hover){.lb__id .lb__mail:hover{color:var(--fg)}}
+.lb__contact a{color:var(--muted); text-decoration:none; overflow-wrap:anywhere}
+@media (hover:hover){.lb__contact a:hover{color:var(--fg)}}
+.lb__social{display:inline-grid; place-items:center; width:44px; height:44px; margin:-10px -10px -10px 0}
+@media (min-width:640px){.lb__id a{white-space:nowrap}}
+
+/* ---------- Tarjetas de video (sección 03): enlace + ícono Play ---------- */
+.media__link{position:absolute; inset:0; display:block; color:inherit; text-decoration:none}
+.media__link:focus-visible{outline:2px solid var(--c-accent); outline-offset:-2px}
+.media--video:focus-within .media__ov, .media--linked:focus-within .media__ov{opacity:1}
+.media--video:focus-within .media__ov span, .media--linked:focus-within .media__ov span{transform:none}
+.media--video .media__ov span{margin-top:104px}   /* el texto queda debajo del ícono */
+.play{
+  position:absolute; left:50%; top:50%; z-index:2; width:68px; height:68px; margin:-34px 0 0 -34px;
+  display:grid; place-items:center; border-radius:50%; color:#fff;
+  border:1.5px solid rgba(255,255,255,.9); background:rgba(21,23,24,.22);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  transition:transform var(--dur-hover) var(--ease), background-color var(--dur-hover) var(--ease), color var(--dur-hover) var(--ease), border-color var(--dur-hover) var(--ease);
+}
+.play svg{width:30px; height:30px; margin-left:3px}
+@media (hover:hover){
+  .media--video:hover .play{transform:scale(1.1); background:#fff; color:var(--c-ink-light); border-color:#fff}
+}
+.media--video:focus-within .play{background:#fff; color:var(--c-ink-light); border-color:#fff}
+@media (max-width:639.98px){.play{width:56px; height:56px; margin:-28px 0 0 -28px}.play svg{width:26px;height:26px}}
+
+/* ---------- Reveal al hacer scroll ----------
+   Solo se ocultan si JS + IntersectionObserver están activos. */
+html.js-rv .rv{
+  opacity:0; transform:translate3d(0,var(--reveal-y),0);
+  transition:opacity var(--dur-reveal) var(--ease-soft), transform var(--dur-reveal) var(--ease-soft);
+  transition-delay:calc(var(--i,0) * var(--stagger));
+}
+html.js-rv .rv.is-in{opacity:1; transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:.01ms !important; animation-duration:.01ms !important}
+}
 </style>
 </head>
 <body>
-<div class="lang"><button data-l="de" aria-pressed="true">DE</button>/<button data-l="en" aria-pressed="false">EN</button></div>
 
-<main id="top">
-<div class="hero" id="hero">
-  <!-- HERO-VIDEO: Zeile auskommentieren und Datei angeben (mp4, ohne Ton). Das Video wird mit den Druckplatten überdruckt. -->
-  <!-- <video autoplay muted loop playsinline preload="metadata"><source src="hero-loop.mp4" type="video/mp4"></video> -->
-  <div class="field" id="field" aria-hidden="true"></div>
-  <div class="hero-fade" id="heroFade" aria-hidden="true"></div>
-  <div class="dot" id="dot" role="slider" tabindex="0" aria-label="Farbnaht verschieben" aria-valuemin="8" aria-valuemax="92" aria-valuenow="92"></div>
-  <div class="hg">
-    <p class="who"><span class="w1" id="w1">Robin Zuniga - Portfolio 2026</span><span class="w2" id="w2" aria-hidden="true">Robin Zuniga - Portfolio 2026</span></p>
-    <h1 class="plates" id="h1" aria-label="Grafikdesign Audiovisuals KI-Mediengestaltung"><span class="pl c" id="ac" aria-hidden="true">Cmyk<br>Rgb<br>Hex<i class="bl"></i></span><span class="pl m" id="am" aria-hidden="true">Cmyk<br>Rgb<br>Hex<i class="bl"></i></span></h1>
-    <div class="plates tr" aria-hidden="true"><span class="pl c" id="bc">Grafikdesign,<br>Audiovisuals,<br>KI-Mediengestaltung<i class="bl"></i></span><span class="pl m" id="bm">Grafikdesign,<br>Audiovisuals,<br>KI-Mediengestaltung<i class="bl"></i></span></div>
-    <div class="stamp">Iterate ’til you bleed</div>
+<!-- Selector de idioma -->
+<header class="topbar">
+  <span class="topbar__brand" aria-hidden="true">Robin Zuñiga | Portfolio 2026</span>
+  <div class="lang" role="group" aria-label="Sprache / Language">
+    <button type="button" data-lang="de" aria-pressed="true">DE</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
   </div>
-</div>
+</header>
 
-<section id="grafik" class="on-w">
-  <div class="strip s3">
-    <div class="it"><div class="card mg" tabindex="0" role="button" aria-label="Weitere AOK-Projekte ansehen" aria-haspopup="dialog"><img class="cv" src="img/aok-mediengruppe-geschaftsbericht-cover-mockup.webp" width="1200" height="900" decoding="async" alt="AOK Mediengruppe Geschäftsbericht, Cover-Mockup"><div class="pt" data-en="<b>AOK Editorial</b>"><b>AOK Editorial</b></div></div></div>
-    <div class="it"><div class="card gr" tabindex="0" role="button" aria-label="Weitere digitale Porträts ansehen" aria-haspopup="dialog"><img class="cv" src="img/wacom-grafiktablet-mit-digitaler-portrat-illustration.webp" width="1446" height="1087" decoding="async" alt="Wacom-Grafiktablet mit digitaler Porträt-Illustration in Bearbeitung"><div class="pt" data-en="<b>Digital Illustration</b>"><b>Digitale Illustration</b></div></div></div>
-    <div class="it"><div class="card ms" tabindex="0" role="button" aria-label="Weitere Meistersaal-Projekte ansehen" aria-haspopup="dialog"><img class="cv" src="img/macbook-air-mit-meistersaal-projektansicht.webp" width="1400" height="1050" decoding="async" alt="MacBook Air mit Meistersaal-Projektansicht"><div class="pt" data-en="<b>Online Presence</b>"><b>Online auftritte</b></div></div></div>
-  </div>
-</section>
+<main>
 
-<section id="av" class="on-w ov">
-  <!-- Vimeo-ID in data-vimeo eintragen, z. B. data-vimeo="123456789" -->
-  <div class="strip">
-    <div class="it w"><a class="card" href="https://robinzunigabln.github.io/Beat-on-the-Box-Game/" target="_blank" rel="noopener noreferrer" aria-label="Beat on the Box öffnen (neuer Tab)"><img class="cv" src="img/beat-on-the-box-spiel-thumbnail.webp" width="1920" height="1080" loading="lazy" decoding="async" alt="Beat on the Box, Spiel-Thumbnail"><div class="pt" data-en="<b>2D-Browser-Game</b>Thomann featuring Dee Dee Ramone"><b>2D-Browser-Game</b>Thomann featuring Dee Dee Ramone</div></a></div>
-    <div class="it w"><a class="card" href="https://robinzunigabln.github.io/Turkish-Airlines-Game/" target="_blank" rel="noopener noreferrer" aria-label="Connect Your Destiny öffnen" aria-haspopup="dialog"><img class="cv" src="img/connect-your-destiny-spiel-thumbnail.webp" width="1920" height="1080" loading="lazy" decoding="async" alt="Connect Your Destiny, Spiel-Thumbnail"><div class="pt" data-en="<b>2D-Browser Recruiting Game</b>"><b>2D-Browser Recruiting Game</b></div></a></div>
-  </div>
-</section>
-
-<section id="ki" class="on-w ov">
-  <div class="strip s2">
-    <div class="it"><a class="card vid" href="https://vimeo.com/118804926" target="_blank" rel="noopener noreferrer" aria-label="Video auf Vimeo öffnen (neuer Tab): Extratapete - Modulor GmbH, Berlin"><img class="cv" src="img/extratapete-modulor-gmbh-berlin-video-thumbnail.webp" width="3360" height="1884" loading="lazy" decoding="async" alt="Extratapete, Modulor GmbH Berlin – Video-Thumbnail"><div class="pt" data-en="<b>Extratapete - Modulor GmbH, Berlin</b>"><b>Extratapete - Modulor Gmbh, Berlin</b></div></a></div>
-    <div class="it"><a class="card vid" href="https://www.youtube.com/watch?v=lJJ2GTHksEw" target="_blank" rel="noopener noreferrer" aria-label="Video auf YouTube öffnen (neuer Tab): Konzept &amp; Realisation, Band &quot;R&quot;"><img class="cv" src="img/konzept-und-realisation-band-r-video.webp" width="1674" height="939" loading="lazy" decoding="async" alt="Konzept &amp; Realisation, Band &quot;R&quot; – Video-Thumbnail"><div class="pt" data-en="<b>Concept &amp; realization, band &quot;R&quot;</b>"><b>Konzept &amp; Realisation, Band "R"</b></div></a></div>
-  </div>
-</section>
-
-<section id="ueber" class="on-w">
-  <div class="about">
-    <div class="ph"><img src="img/robinson-zuniga.webp" width="1000" height="1270" loading="lazy" decoding="async" alt="Robinson Zuñiga"><a class="ph-credit" href="https://www.instagram.com/valeriosfoto/" target="_blank" rel="noopener noreferrer" aria-label="Foto: Valentina Rios – Instagram-Profil öffnen (neuer Tab)"></a></div>
-    <div class="t">
-      <p class="lead" data-en="My vision of design is driven by two completely different cultural and communication spaces. This synthesis gives rise to a visual mindset that seamlessly connects fresh perspectives with digital channels, new content formats, and smart platforms.">Meine Vision von Design wird von zwei völlig unterschiedlichen kulturellen und kommunikativen Räumen geprägt. Diese Synthese bringt eine visuelle Denkweise hervor, die frische Perspektiven nahtlos mit digitalen Kanälen, neuen Content-Formaten und smarten Plattformen verbindet.</p>
+  <!-- 01 · Hero -->
+  <section class="band band--light hero" id="s1" aria-labelledby="h-hero">
+    <div class="wrap">
+      <div class="hero__group">
+      <div class="hero__text">
+        <span class="label rv">Robin Zuñiga | Portfolio 2026</span>
+        <h1 id="h-hero" class="rv">
+          <span data-i18n="h1a">Grafikdesign,</span>
+          <span>Audiovisuals,</span>
+          <span data-i18n="h1c">KI-Mediengestaltung</span>
+        </h1>
+        <p class="claim rv">Iterate ’til you <span class="claim__accent">bleed</span></p>
+      </div>
+      <figure class="photo rv" aria-label="Porträt Robin Zuñiga">
+        <img src="media/robin-zuniga-640.webp" srcset="media/robin-zuniga-640.webp 640w, media/robin-zuniga-1100.webp 1100w" sizes="(max-width: 899px) 84vw, 362px" width="1100" height="1398" fetchpriority="high" decoding="async" alt="Robin Zuñiga am Fenster. Foto: Valentina Rios" data-i18n-alt="photoAlt">
+      </figure>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- 02 · Grafikdesign — 3 × 4:3 -->
+  <section class="band band--dark band--stack" id="s2" aria-labelledby="h-s2">
+    <div class="wrap">
+      <header class="head">
+        <span class="label rv"><b>02</b></span>
+        <h2 id="h-s2" class="rv" data-i18n="s2title">CMYK, RGB und Hex.</h2>
+        <p class="rv" data-i18n="s2l1">Editorial, Kampagnen und Corporate Design für Print und Screen.</p>
+      </header>
+      <div class="row row--3">
+        <figure class="media media--43 rv" tabindex="0" role="button" aria-haspopup="dialog" data-lb="lb-1">
+          <div class="media__ph"><img src="media/aok-plus-geschaeftsbericht-640.webp" srcset="media/aok-plus-geschaeftsbericht-640.webp 640w, media/aok-plus-geschaeftsbericht-1000.webp 1000w" sizes="(max-width: 639px) 100vw, (max-width: 1600px) 32vw, 490px" width="1000" height="750" loading="lazy" decoding="async" alt="Geschäftsbericht 2017/2018 der AOK PLUS – Titelgestaltung" data-i18n-alt="img1"></div>
+          <figcaption class="media__ov"><span data-i18n="card2a">Corporate Publishing für die AOK.</span></figcaption>
+        </figure>
+        <figure class="media media--43 rv" tabindex="0" role="button" aria-haspopup="dialog" data-lb="lb-2">
+          <div class="media__ph"><img src="media/wacom-illustration-640.webp" srcset="media/wacom-illustration-640.webp 640w, media/wacom-illustration-1000.webp 1000w" sizes="(max-width: 639px) 100vw, (max-width: 1600px) 32vw, 490px" width="1000" height="750" loading="lazy" decoding="async" alt="Digitale Illustration auf einem Wacom-Grafiktablett" data-i18n-alt="img2"></div>
+          <figcaption class="media__ov"><span data-i18n="card2b">Digitale Corporate-Illustrationen für die AOKs.</span></figcaption>
+        </figure>
+        <figure class="media media--43 rv" tabindex="0" role="button" aria-haspopup="dialog" data-lb="lb-3">
+          <div class="media__ph"><img src="media/aok-original-newsletter-640.webp" srcset="media/aok-original-newsletter-640.webp 640w, media/aok-original-newsletter-1000.webp 1000w" sizes="(max-width: 639px) 100vw, (max-width: 1600px) 32vw, 490px" width="1000" height="750" loading="lazy" decoding="async" alt="AOK Original – Newsletter für Betriebs- und Personalräte" data-i18n-alt="img3"></div>
+          <figcaption class="media__ov"><span data-i18n="card2c">Online-Auftritte.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Audiovisuals — 2 × 16:9 -->
+  <section class="band band--light band--stack" id="s3" aria-labelledby="h-s3">
+    <div class="wrap">
+      <header class="head">
+        <span class="label rv"><b>03</b></span>
+        <h2 id="h-s3" class="rv">Cut. Sound. Motion.</h2>
+        <p class="rv" data-i18n="s3l1">Idee, Konzept, Kamera, Schnitt und Release.</p>
+      </header>
+      <div class="row row--2">
+        <figure class="media media--169 media--video rv">
+          <a class="media__link" href="https://vimeo.com/118804926" target="_blank" rel="noopener" data-i18n-aria="vid1" aria-label="Video auf Vimeo ansehen (neuer Tab)">
+            <div class="media__ph"><img src="media/extra-tapete-800.webp" srcset="media/extra-tapete-800.webp 800w, media/extra-tapete-1500.webp 1500w" sizes="(max-width: 639px) 100vw, (max-width: 1600px) 49vw, 742px" width="1500" height="844" loading="lazy" decoding="async" alt="Schriftzug „Extratapete“ auf einer Wand" data-i18n-alt="img4"></div>
+            <span class="media__ov"><span data-i18n="card3a">Imagefilm für Extratapete und Modulor GmbH, Berlin.</span></span>
+            <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" fill="currentColor"/></svg></span>
+          </a>
+        </figure>
+        <figure class="media media--169 media--video rv">
+          <a class="media__link" href="https://www.youtube.com/watch?v=lJJ2GTHksEw" target="_blank" rel="noopener" data-i18n-aria="vid2" aria-label="Video auf YouTube ansehen (neuer Tab)">
+            <div class="media__ph"><img src="media/wunderkerze-800.webp" srcset="media/wunderkerze-800.webp 800w, media/wunderkerze-1500.webp 1500w" sizes="(max-width: 639px) 100vw, (max-width: 1600px) 49vw, 742px" width="1500" height="844" loading="lazy" decoding="async" alt="Schwarzweißfoto: Hand mit brennender Wunderkerze" data-i18n-alt="img5"></div>
+            <span class="media__ov"><span data-i18n="card3b">Musikvideo für die Band „R“, freies Projekt.</span></span>
+            <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" fill="currentColor"/></svg></span>
+          </a>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · KI-Mediengestaltung — 2 × 16:9 -->
+  <section class="band band--dark band--stack" id="s4" aria-labelledby="h-s4">
+    <div class="wrap">
+      <header class="head">
+        <span class="label rv"><b>04</b></span>
+        <h2 id="h-s4" class="rv" data-i18n="s4title">Prompt. Play. Repeat.</h2>
+        <p class="rv" data-i18n="s4l1">2D-Browser-Games als Teil der KI-Weiterbildung, mit generativer KI konzipiert und gebaut.</p>
+      </header>
+      <div class="row row--2">
+        <figure class="media media--169 media--linked rv">
+          <a class="media__link" href="https://robinzunigabln.github.io/Beat-on-the-Box-Game/" target="_blank" rel="noopener" data-i18n-aria="gh1" aria-label="Beat on the Box – Spiel im Browser starten (neuer Tab)">
+            <div class="media__ph"><img src="media/beat-on-the-box-800.webp" srcset="media/beat-on-the-box-800.webp 800w, media/beat-on-the-box-1500.webp 1500w" sizes="(max-width: 639px) 100vw, (max-width: 1600px) 49vw, 742px" width="1500" height="844" loading="lazy" decoding="async" alt="Logo „Beat on the Box“ im Pixel-Stil auf Betonhintergrund" data-i18n-alt="img17"></div>
+            <span class="media__ov"><span data-i18n="card4a">Ramones-Hommage für den Online-Musikhändler Thomann.</span></span>
+          </a>
+        </figure>
+        <figure class="media media--169 media--linked rv">
+          <a class="media__link" href="https://robinzunigabln.github.io/Turkish-Airlines-Game/" target="_blank" rel="noopener" data-i18n-aria="gh2" aria-label="Turkish Airlines Career Game – Spiel im Browser starten (neuer Tab)">
+            <div class="media__ph"><img src="media/turkish-airlines-career-800.webp" srcset="media/turkish-airlines-career-800.webp 800w, media/turkish-airlines-career-1500.webp 1500w" sizes="(max-width: 639px) 100vw, (max-width: 1600px) 49vw, 742px" width="1500" height="844" loading="lazy" decoding="async" alt="Turkish Airlines Career Fair Experience – Startseite „Connect your destiny.“" data-i18n-alt="img18"></div>
+            <span class="media__ov"><span data-i18n="card4b">Messe-Recruiting-Game für Turkish Airlines.</span></span>
+          </a>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · Footer -->
+  <section class="band band--light contact" id="s5" aria-label="Footer">
+    <div class="wrap">
+      <div class="contact__mid">
+        <button type="button" class="to-top rv" id="to-top" data-i18n-aria="toTop" aria-label="Nach oben"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+      </div>
+      <footer class="foot rv">
+        <nav class="foot__links" aria-label="Kontakt und Rechtliches">
+                    <a href="mailto:robinsonzr@icloud.com" data-i18n="contact">Kontakt</a>
+          <span class="foot__sep" aria-hidden="true"></span>
+          <a class="foot__in" href="https://www.linkedin.com/in/robinson-zuniga" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="logo-in" viewBox="0 0 382 382" aria-hidden="true" focusable="false"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889 C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056 H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806 c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1 s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73 c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079 c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426 c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472 L341.91,330.654L341.91,330.654z"/></svg>
+          </a>
+          <span class="foot__sep" aria-hidden="true"></span>
+          <button type="button" data-dialog="dlg-impressum">Impressum</button>
+          <span class="foot__sep" aria-hidden="true"></span>
+          <button type="button" data-dialog="dlg-datenschutz" data-i18n="privacy">Datenschutz</button>
+        </nav>
+        <p class="foot__note"><span class="sr-only" data-i18n="aiNote">… und ja, ich habe alles mit KI gemacht.</span><span class="ai-anim" aria-hidden="true"></span></p>
+      </footer>
+    </div>
+  </section>
 
 </main>
 
-<footer id="kontakt" class="on-m">
-  <div class="mr"><button class="up" type="button" aria-label="Zurück zum Anfang" title="Zurück zum Anfang" onclick="window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V4M5 11l7-7 7 7"/></svg></button></div>
-  <div class="end"><div class="lnk"><a class="ct" href="mailto:robinsonzr@icloud.com">Contact</a><i class="sep" aria-hidden="true"></i><a class="li" href="https://www.linkedin.com/in/robinson-zuniga/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg class="li-ic" viewBox="0 0 382 382" aria-hidden="true"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472L341.91,330.654L341.91,330.654z"/></svg></a><i class="sep" aria-hidden="true"></i><a class="ct" href="#impressum" id="impressumLink">Impressum</a><i class="sep" aria-hidden="true"></i><a class="ct" href="#datenschutz" id="datenschutzLink">Datenschutz</a></div><span>...and yes, i did it all with A.I.</span></div>
-</footer>
-
-<div class="gm" id="gameLayer" role="dialog" aria-modal="true" aria-label="Connect Your Destiny">
-  <button class="gm-x" type="button" aria-label="Schließen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>
-</div>
-
-<div class="lb" id="lbAok" role="dialog" aria-modal="true" aria-label="AOK Mediengruppe – weitere Projekte">
-  <button class="lb-x" type="button" aria-label="Schließen">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-  </button>
-  <div class="lb-stack">
-    <div class="lb-item"><img data-src="img/aok-geschaftsbericht-2016-2017-und-nachhaltigkeitsbericht.webp" width="1448" height="1086" decoding="async" alt="AOK Geschäftsbericht 2016/2017 und Nachhaltigkeitsbericht AOK Rheinland/Hamburg"></div>
-    <div class="lb-item"><img data-src="img/digitales-portrat-einer-schwangeren-aok-kundin.webp" width="1448" height="1086" decoding="async" alt="Digitales Porträt einer schwangeren AOK-Kundin in einer grünen Hand-Sitzskulptur"></div>
-    <div class="lb-item"><img data-src="img/nachhaltigkeitsbericht-aok-rheinland-hamburg-aufgeschlagene-doppelseite.webp" width="1442" height="1091" decoding="async" alt="Nachhaltigkeitsbericht AOK Rheinland/Hamburg, aufgeschlagene Doppelseite – Gesundheit im Fokus"></div>
-    <div class="lb-end"><div class="lb-item"><img data-src="img/aok-hessen-geschaftsbericht-engagiert-fur-gesundheit.webp" width="1448" height="1086" decoding="async" alt="AOK Hessen Geschäftsbericht – Engagiert für Gesundheit – und MAGNO Magazin der AOK Nordost"></div><button class="lb-up" type="button" aria-label="Zurück zum Anfang" title="Zurück zum Anfang"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V4M5 11l7-7 7 7"/></svg></button></div>
+<!-- Lightbox · Proyecto 01 -->
+<dialog class="lb" id="lb-1" aria-label="AOK-Geschäftsberichte" data-i18n-aria="lbName1">
+  <div class="lb__bar"><button type="button" class="icon-btn icon-btn--close" data-lb-close data-i18n-aria="close" aria-label="Schließen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+  <div class="lb__wrap">
+    <header class="lb__head">
+      <span class="label" aria-hidden="true"></span>
+      <p data-i18n="lbText1">Editorial Design mit klarem Look &amp; Feel für Geschäftsberichte, Magazine und interne Kommunikation.</p>
+    </header>
+    <div class="lb__media">
+        <figure class="slot slot--1610"><img src="media/aok-hessen-magno-1000.webp" srcset="media/aok-hessen-magno-1000.webp 1000w, media/aok-hessen-magno-1440.webp 1440w" sizes="(max-width: 1080px) 100vw, 980px" width="1440" height="900" loading="lazy" decoding="async" alt="Geschäftsbericht 2021/2022 der AOK Hessen und Magazin MAGNO der AOK Nordost" data-i18n-alt="img7"></figure>
+        <figure class="slot slot--1610"><img src="media/aok-nachhaltigkeitsbericht-innen-1000.webp" srcset="media/aok-nachhaltigkeitsbericht-innen-1000.webp 1000w, media/aok-nachhaltigkeitsbericht-innen-1440.webp 1440w" sizes="(max-width: 1080px) 100vw, 980px" width="1440" height="900" loading="lazy" decoding="async" alt="Innenseiten des Nachhaltigkeitsberichts der AOK Rheinland/Hamburg" data-i18n-alt="img8"></figure>
+        <figure class="slot slot--1610"><img src="media/aok-berichte-nachhaltigkeit-1000.webp" srcset="media/aok-berichte-nachhaltigkeit-1000.webp 1000w, media/aok-berichte-nachhaltigkeit-1440.webp 1440w" sizes="(max-width: 1080px) 100vw, 980px" width="1440" height="900" loading="lazy" decoding="async" alt="Geschäftsbericht 2016/2017 der AOK PLUS und Nachhaltigkeitsbericht der AOK Rheinland/Hamburg" data-i18n-alt="img6"></figure>
+        <figure class="slot slot--1610"><img src="media/aok-portraitseite-1000.webp" srcset="media/aok-portraitseite-1000.webp 1000w, media/aok-portraitseite-1440.webp 1440w" sizes="(max-width: 1080px) 100vw, 980px" width="1440" height="900" loading="lazy" decoding="async" alt="Porträtseite aus einem AOK-Geschäftsbericht" data-i18n-alt="img9"></figure>
+    </div>
+    <footer class="lb__foot">
+      <div class="lb__thumbs">
+          <figure class="slot slot--11"><img src="media/aok-stark-fuer-detail-400.webp" srcset="media/aok-stark-fuer-detail-400.webp 400w, media/aok-stark-fuer-detail-480.webp 480w" sizes="(max-width: 1080px) 25vw, 240px" width="480" height="480" loading="lazy" decoding="async" alt="Geprägter Schriftzug „Stark für“ auf einem Geschäftsberichts-Cover, Detailaufnahme" data-i18n-alt="img23"></figure>
+          <figure class="slot slot--11"><img src="media/aok-gesamtvolumen-detail-400.webp" srcset="media/aok-gesamtvolumen-detail-400.webp 400w, media/aok-gesamtvolumen-detail-480.webp 480w" sizes="(max-width: 1080px) 25vw, 240px" width="480" height="480" loading="lazy" decoding="async" alt="Infografik „Gesamtvolumen 17.285 Mio. Euro“ in einem AOK-Geschäftsbericht, Detail" data-i18n-alt="img24"></figure>
+          <figure class="slot slot--11"><img src="media/aok-magno-detail-400.webp" srcset="media/aok-magno-detail-400.webp 400w, media/aok-magno-detail-480.webp 480w" sizes="(max-width: 1080px) 25vw, 240px" width="480" height="480" loading="lazy" decoding="async" alt="Doppelseite aus dem Magazin MAGNO mit Zitat und Fotos, Detailaufnahme" data-i18n-alt="img25"></figure>
+          <figure class="slot slot--11"><img src="media/aok-plus-stanzung-detail-400.webp" srcset="media/aok-plus-stanzung-detail-400.webp 400w, media/aok-plus-stanzung-detail-480.webp 480w" sizes="(max-width: 1080px) 25vw, 240px" width="480" height="480" loading="lazy" decoding="async" alt="Stanzfenster im Cover eines Geschäftsberichts der AOK PLUS, Detail" data-i18n-alt="img26"></figure>
+      </div>
+      <div class="lb__contact">
+        <div class="lb__id">
+          <span class="lb__name">Robin Zuñiga</span>
+          <span class="lb__sep" aria-hidden="true"></span>
+          <a class="lb__mail" href="mailto:robinsonzr@icloud.com" data-i18n="contact">Kontakt</a>
+          <a class="lb__social" href="https://www.linkedin.com/in/robinson-zuniga" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="logo-in" viewBox="0 0 382 382" aria-hidden="true" focusable="false"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889 C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056 H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806 c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1 s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73 c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079 c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426 c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472 L341.91,330.654L341.91,330.654z"/></svg>
+          </a>
+        </div>
+        <button type="button" class="lb__top" data-lb-top data-i18n-aria="toTop" aria-label="Nach oben"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+      </div>
+    </footer>
   </div>
-  <div class="lb-credit"><span>Robin Zuniga</span><i class="sep" aria-hidden="true"></i><a href="mailto:robinsonzr@icloud.com">Contact</a><i class="sep" aria-hidden="true"></i><a href="https://www.linkedin.com/in/robinson-zuniga/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg class="li-ic" viewBox="0 0 382 382" aria-hidden="true"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472L341.91,330.654L341.91,330.654z"/></svg></a></div>
-</div>
-
-<div class="lb" id="lbPortraits" role="dialog" aria-modal="true" aria-label="Digitale Porträts – weitere Arbeiten">
-  <button class="lb-x" type="button" aria-label="Schließen">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-  </button>
-  <div class="lb-stack">
-    <div class="lb-item"><img data-src="img/digitales-portrat-gerahmter-druck-illustration-mit.webp" width="1284" height="963" decoding="async" alt="Digitales Porträt, gerahmter Druck – Illustration mit Farbe"></div>
-    <div class="lb-item"><img data-src="img/digitales-portrat-druck-auf-papier-linienzeichnung.webp" width="1400" height="1050" decoding="async" alt="Digitales Porträt, Druck auf Papier – Linienzeichnung mit Farbakzenten"></div>
-    <div class="lb-item"><img data-src="img/digitales-portrat-druck-auf-papier-linienzeichnung-2.webp" width="1400" height="1050" decoding="async" alt="Digitales Porträt, Druck auf Papier – Linienzeichnung mit violetten Augen"></div>
-    <div class="lb-end"><div class="lb-item"><img data-src="img/digitales-portrat-druck-auf-papier-kolorierte.webp" width="1400" height="1050" decoding="async" alt="Digitales Porträt, Druck auf Papier – kolorierte Skizze"></div><button class="lb-up" type="button" aria-label="Zurück zum Anfang" title="Zurück zum Anfang"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V4M5 11l7-7 7 7"/></svg></button></div>
+</dialog>
+<!-- Lightbox · Proyecto 02 -->
+<dialog class="lb" id="lb-2" aria-label="Digitale Illustration" data-i18n-aria="lbName2">
+  <div class="lb__bar"><button type="button" class="icon-btn icon-btn--close" data-lb-close data-i18n-aria="close" aria-label="Schließen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+  <div class="lb__wrap">
+    <header class="lb__head">
+      <span class="label" aria-hidden="true"></span>
+      <p data-i18n="lbText2">Erste Skizzen von Hand, danach mit Illustrator und Photoshop auf einem Wacom-Tablet erstellt. Veröffentlicht in Geschäftsberichten, Magazinen und Online-Medien.</p>
+    </header>
+    <div class="lb__media">
+        <figure class="slot slot--1610"><img src="media/illu-portraet-vektor-1000.webp" srcset="media/illu-portraet-vektor-1000.webp 1000w, media/illu-portraet-vektor-1284.webp 1284w" sizes="(max-width: 1080px) 100vw, 980px" width="1284" height="802" loading="lazy" decoding="async" alt="Digitales Porträt im Vektorstil, gerahmt an einer Betonwand" data-i18n-alt="img10"></figure>
+        <figure class="slot slot--1610"><img src="media/illu-portraet-linie-1000.webp" srcset="media/illu-portraet-linie-1000.webp 1000w, media/illu-portraet-linie-1400.webp 1400w" sizes="(max-width: 1080px) 100vw, 980px" width="1400" height="875" loading="lazy" decoding="async" alt="Digitales Porträt als reduzierte Linienzeichnung" data-i18n-alt="img12"></figure>
+        <figure class="slot slot--1610"><img src="media/illu-portraet-schraffur-1000.webp" srcset="media/illu-portraet-schraffur-1000.webp 1000w, media/illu-portraet-schraffur-1400.webp 1400w" sizes="(max-width: 1080px) 100vw, 980px" width="1400" height="875" loading="lazy" decoding="async" alt="Digitale Porträtzeichnung mit Schraffur" data-i18n-alt="img11"></figure>
+        <figure class="slot slot--1610"><img src="media/illu-portraet-linienraster-1000.webp" srcset="media/illu-portraet-linienraster-1000.webp 1000w, media/illu-portraet-linienraster-1400.webp 1400w" sizes="(max-width: 1080px) 100vw, 980px" width="1400" height="875" loading="lazy" decoding="async" alt="Digitales Porträt mit Linienraster-Schraffur" data-i18n-alt="img13"></figure>
+    </div>
+    <footer class="lb__foot">
+      <div class="lb__thumbs">
+          <figure class="slot slot--11"><img src="media/illu-druck-farbe-400.webp" srcset="media/illu-druck-farbe-400.webp 400w, media/illu-druck-farbe-800.webp 800w" sizes="(max-width: 1080px) 25vw, 240px" width="800" height="800" loading="lazy" decoding="async" alt="Gedruckte farbige Porträtillustration in einem Geschäftsbericht, Detailaufnahme" data-i18n-alt="img20"></figure>
+          <figure class="slot slot--11"><img src="media/illu-skizze-detail-400.webp" srcset="media/illu-skizze-detail-400.webp 400w, media/illu-skizze-detail-480.webp 480w" sizes="(max-width: 1080px) 25vw, 240px" width="480" height="480" loading="lazy" decoding="async" alt="Digitale Porträtillustration im Entstehungsprozess, Detail" data-i18n-alt="img21"></figure>
+          <figure class="slot slot--11"><img src="media/illu-druck-schraffur-400.webp" srcset="media/illu-druck-schraffur-400.webp 400w, media/illu-druck-schraffur-800.webp 800w" sizes="(max-width: 1080px) 25vw, 240px" width="800" height="800" loading="lazy" decoding="async" alt="Gedruckte Porträtillustration mit Schraffur, Detailaufnahme" data-i18n-alt="img22"></figure>
+          <figure class="slot slot--11"><img src="media/illu-druck-detail-400.webp" srcset="media/illu-druck-detail-400.webp 400w, media/illu-druck-detail-800.webp 800w" sizes="(max-width: 1080px) 25vw, 240px" width="800" height="800" loading="lazy" decoding="async" alt="Gedruckte Porträtillustration im Linienraster-Stil, Detailaufnahme" data-i18n-alt="img19"></figure>
+      </div>
+      <div class="lb__contact">
+        <div class="lb__id">
+          <span class="lb__name">Robin Zuñiga</span>
+          <span class="lb__sep" aria-hidden="true"></span>
+          <a class="lb__mail" href="mailto:robinsonzr@icloud.com" data-i18n="contact">Kontakt</a>
+          <a class="lb__social" href="https://www.linkedin.com/in/robinson-zuniga" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="logo-in" viewBox="0 0 382 382" aria-hidden="true" focusable="false"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889 C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056 H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806 c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1 s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73 c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079 c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426 c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472 L341.91,330.654L341.91,330.654z"/></svg>
+          </a>
+        </div>
+        <button type="button" class="lb__top" data-lb-top data-i18n-aria="toTop" aria-label="Nach oben"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+      </div>
+    </footer>
   </div>
-  <div class="lb-credit"><span>Robin Zuniga</span><i class="sep" aria-hidden="true"></i><a href="mailto:robinsonzr@icloud.com">Contact</a><i class="sep" aria-hidden="true"></i><a href="https://www.linkedin.com/in/robinson-zuniga/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg class="li-ic" viewBox="0 0 382 382" aria-hidden="true"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472L341.91,330.654L341.91,330.654z"/></svg></a></div>
-</div>
-<div class="lb" id="lbMeistersaal" role="dialog" aria-modal="true" aria-label="Meistersaal, Berlin – weitere Arbeiten">
-  <button class="lb-x" type="button" aria-label="Schließen">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-  </button>
-  <div class="lb-stack">
-    <div class="lb-item"><img data-src="img/aok-original-mobile-ansicht-auf-dem.webp" width="1400" height="1050" decoding="async" alt="AOK Original, mobile Ansicht auf dem Smartphone"></div>
-    <div class="lb-item"><img data-src="img/aok-original-magazin-tablet-ansicht-einer.webp" width="1400" height="1050" decoding="async" alt="AOK Original Magazin, Tablet-Ansicht einer Doppelseite"></div>
-    <div class="lb-end"><div class="lb-item"><img data-src="img/wacom-grafiktablet-mit-digitaler-illustration-in.webp" width="1448" height="1086" decoding="async" alt="Wacom-Grafiktablet mit digitaler Illustration in Bearbeitung"></div><button class="lb-up" type="button" aria-label="Zurück zum Anfang" title="Zurück zum Anfang"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V4M5 11l7-7 7 7"/></svg></button></div>
+</dialog>
+<!-- Lightbox · Proyecto 03 -->
+<dialog class="lb" id="lb-3" aria-label="Newsletter „AOK Original“" data-i18n-aria="lbName3">
+  <div class="lb__bar"><button type="button" class="icon-btn icon-btn--close" data-lb-close data-i18n-aria="close" aria-label="Schließen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+  <div class="lb__wrap">
+    <header class="lb__head">
+      <span class="label" aria-hidden="true"></span>
+      <p data-i18n="lbText3">Interaktiver Online-Newsletter mit klarer UX und starken Headlines, entwickelt im neuen AOK-Corporate-Design.</p>
+    </header>
+    <div class="lb__media">
+        <figure class="slot slot--1610"><img src="media/original-tablet-newsletter-1000.webp" srcset="media/original-tablet-newsletter-1000.webp 1000w, media/original-tablet-newsletter-1400.webp 1400w" sizes="(max-width: 1080px) 100vw, 980px" width="1400" height="875" loading="lazy" decoding="async" alt="Newsletter „AOK Original“ auf einem Tablet" data-i18n-alt="img15"></figure>
+        <figure class="slot slot--1610"><img src="media/original-smartphone-newsletter-1000.webp" srcset="media/original-smartphone-newsletter-1000.webp 1000w, media/original-smartphone-newsletter-1400.webp 1400w" sizes="(max-width: 1080px) 100vw, 980px" width="1400" height="875" loading="lazy" decoding="async" alt="Newsletter „AOK Original“ auf einem Smartphone" data-i18n-alt="img16"></figure>
+        <figure class="slot slot--1610"><img src="media/original-wacom-illustration-1000.webp" srcset="media/original-wacom-illustration-1000.webp 1000w, media/original-wacom-illustration-1440.webp 1440w" sizes="(max-width: 1080px) 100vw, 980px" width="1440" height="900" loading="lazy" decoding="async" alt="Illustration für AOK Original auf einem Wacom-Grafiktablett" data-i18n-alt="img14"></figure>
+        <figure class="slot slot--1610"><!-- <img src="p3-4.avif" alt="" loading="lazy" width="1600" height="1000"> --><span class="ph-tag">16:10 · 04</span></figure>
+    </div>
+    <footer class="lb__foot">
+      <div class="lb__thumbs">
+          <figure class="slot slot--11"><span class="ph-tag">1:1</span></figure>
+          <figure class="slot slot--11"><span class="ph-tag">1:1</span></figure>
+          <figure class="slot slot--11"><span class="ph-tag">1:1</span></figure>
+          <figure class="slot slot--11"><span class="ph-tag">1:1</span></figure>
+      </div>
+      <div class="lb__contact">
+        <div class="lb__id">
+          <span class="lb__name">Robin Zuñiga</span>
+          <span class="lb__sep" aria-hidden="true"></span>
+          <a class="lb__mail" href="mailto:robinsonzr@icloud.com" data-i18n="contact">Kontakt</a>
+          <a class="lb__social" href="https://www.linkedin.com/in/robinson-zuniga" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="logo-in" viewBox="0 0 382 382" aria-hidden="true" focusable="false"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889 C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056 H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806 c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1 s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73 c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079 c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426 c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472 L341.91,330.654L341.91,330.654z"/></svg>
+          </a>
+        </div>
+        <button type="button" class="lb__top" data-lb-top data-i18n-aria="toTop" aria-label="Nach oben"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button>
+      </div>
+    </footer>
   </div>
-  <div class="lb-credit"><span>Robin Zuniga</span><i class="sep" aria-hidden="true"></i><a href="mailto:robinsonzr@icloud.com">Contact</a><i class="sep" aria-hidden="true"></i><a href="https://www.linkedin.com/in/robinson-zuniga/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg class="li-ic" viewBox="0 0 382 382" aria-hidden="true"><path fill="currentColor" d="M347.445,0H34.555C15.471,0,0,15.471,0,34.555v312.889C0,366.529,15.471,382,34.555,382h312.889C366.529,382,382,366.529,382,347.444V34.555C382,15.471,366.529,0,347.445,0z M118.207,329.844c0,5.554-4.502,10.056-10.056,10.056H65.345c-5.554,0-10.056-4.502-10.056-10.056V150.403c0-5.554,4.502-10.056,10.056-10.056h42.806c5.554,0,10.056,4.502,10.056,10.056V329.844z M86.748,123.432c-22.459,0-40.666-18.207-40.666-40.666S64.289,42.1,86.748,42.1s40.666,18.207,40.666,40.666S109.208,123.432,86.748,123.432z M341.91,330.654c0,5.106-4.14,9.246-9.246,9.246H286.73c-5.106,0-9.246-4.14-9.246-9.246v-84.168c0-12.556,3.683-55.021-32.813-55.021c-28.309,0-34.051,29.066-35.204,42.11v97.079c0,5.106-4.139,9.246-9.246,9.246h-44.426c-5.106,0-9.246-4.14-9.246-9.246V149.593c0-5.106,4.14-9.246,9.246-9.246h44.426c5.106,0,9.246,4.14,9.246,9.246v15.655c10.497-15.753,26.097-27.912,59.312-27.912c73.552,0,73.131,68.716,73.131,106.472L341.91,330.654L341.91,330.654z"/></svg></a></div>
-</div>
+</dialog>
 
-<div class="lb" id="lbImpressum" role="dialog" aria-modal="true" aria-label="Impressum">
-  <button class="lb-x" type="button" aria-label="Schließen">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-  </button>
-  <div class="lb-doc">
-    <h2>Impressum</h2>
-    <p class="lb-sub">Angaben gemäß § 5 TMG</p>
-
+<!-- Impressum / Datenschutz (contenido provisorio) -->
+<dialog class="legal" id="dlg-impressum" aria-labelledby="t-imp">
+  <div class="dlg__bar"><button type="button" class="icon-btn icon-btn--close" data-close data-i18n-aria="close" aria-label="Schließen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+  <div class="dlg" tabindex="-1" autofocus>
+    <h2 id="t-imp">Impressum</h2>
+    <p class="legal-note" data-i18n="legalNote"></p>
+    <h3>Angaben gemäß § 5 DDG</h3>
     <p>Robinson Zuñiga Rodriguez<br>Graefestraße 88<br>10967 Berlin</p>
-
     <h3>Kontakt</h3>
-    <p>Telefon: 0178 8689146<br>E-Mail: <a href="mailto:robinsonzr@icloud.com">robinsonzr@icloud.com</a></p>
-
-    <h3>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
+    <p>Telefon: <a href="tel:+491788689146">0178 8689146</a><br>E-Mail: <a href="mailto:robinsonzr@icloud.com">robinsonzr@icloud.com</a></p>
+    <h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
     <p>Robinson Zuñiga Rodriguez<br>Graefestraße 88<br>10967 Berlin</p>
-
-    <h3>EU-Streitschlichtung</h3>
-    <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.<br>Unsere E-Mail-Adresse finden Sie oben im Impressum. Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
-
     <h3>Haftung für Inhalte</h3>
-    <p>Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.</p>
-
+    <p>Als Diensteanbieter bin ich für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Ich bin jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden entsprechender Rechtsverletzungen werde ich diese Inhalte umgehend entfernen.</p>
     <h3>Haftung für Links</h3>
-    <p>Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.</p>
-
+    <p>Dieses Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.</p>
     <h3>Urheberrecht</h3>
-    <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
+    <p>Die von mir erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen meiner schriftlichen Zustimmung. Genannte Marken und Unternehmensnamen gehören ihren jeweiligen Inhabern; die gezeigten Arbeiten für Kunden entstanden im Rahmen meiner Tätigkeit als angestellter Grafikdesigner.</p>
   </div>
-</div>
-
-<div class="lb" id="lbDatenschutz" role="dialog" aria-modal="true" aria-label="Datenschutzerklärung">
-  <button class="lb-x" type="button" aria-label="Schließen">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-  </button>
-  <div class="lb-doc">
-    <h2>Datenschutzerklärung</h2>
-    <p class="lb-sub">Stand: Oktober 2026</p>
-
+</dialog>
+<dialog class="legal" id="dlg-datenschutz" aria-labelledby="t-ds">
+  <div class="dlg__bar"><button type="button" class="icon-btn icon-btn--close" data-close data-i18n-aria="close" aria-label="Schließen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
+  <div class="dlg" tabindex="-1" autofocus>
+    <h2 id="t-ds" data-i18n="privacyTitle">Datenschutzerklärung</h2>
+    <p class="legal-note" data-i18n="legalNote"></p>
+    <p>Stand: November 2026</p>
     <h3>1. Verantwortlicher</h3>
-    <p>Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:<br>
-    Robinson Zuñiga Rodriguez<br>Graefestraße 88<br>10967 Berlin<br>
-    E-Mail: <a href="mailto:robinsonzr@icloud.com">robinsonzr@icloud.com</a></p>
-
+    <p>Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:<br>Robinson Zuñiga Rodriguez<br>Graefestraße 88<br>10967 Berlin<br>E-Mail: <a href="mailto:robinsonzr@icloud.com">robinsonzr@icloud.com</a></p>
     <h3>2. Ihre Rechte als betroffene Person</h3>
-    <p>Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung, Sperrung oder Löschung dieser Daten. Sie haben außerdem ein Recht auf Einschränkung der Verarbeitung, auf Datenübertragbarkeit sowie ein Beschwerderecht bei der zuständigen Aufsichtsbehörde. Hierzu sowie zu weiteren Fragen zum Thema Datenschutz können Sie sich jederzeit über die oben genannte E-Mail-Adresse an mich wenden.</p>
-
-    <h3>3. Hosting und Server-Log-Dateien</h3>
-    <p>Diese Website wird bei einem externen Hosting-Anbieter gehostet. Beim Besuch der Website erhebt der Hosting-Anbieter automatisch Informationen in sogenannten Server-Log-Dateien, die Ihr Browser übermittelt (z. B. Browsertyp, verwendetes Betriebssystem, Referrer-URL, IP-Adresse, Uhrzeit der Serveranfrage). Diese Daten werden ausschließlich zur Sicherstellung eines störungsfreien Betriebs der Website verarbeitet und nicht mit anderen Datenquellen zusammengeführt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der sicheren und stabilen Bereitstellung der Website).</p>
-
+    <p>Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung (Art. 15 DSGVO) sowie ein Recht auf Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch gegen die Verarbeitung (Art. 21 DSGVO). Außerdem haben Sie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren (Art. 77 DSGVO), in Berlin bei der Berliner Beauftragten für Datenschutz und Informationsfreiheit. Hierzu sowie zu weiteren Fragen zum Thema Datenschutz können Sie sich jederzeit über die oben genannte E-Mail-Adresse an mich wenden.</p>
+    <h3>3. Hosting über GitHub Pages und Server-Log-Dateien</h3>
+    <p>Diese Website wird über GitHub Pages gehostet, einen Dienst der GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. Beim Besuch der Website erhebt GitHub automatisch Informationen in sogenannten Server-Log-Dateien, die Ihr Browser übermittelt, insbesondere Ihre IP-Adresse, Datum und Uhrzeit der Anfrage, Browsertyp, Betriebssystem und Referrer-URL. Diese Daten werden zur Sicherstellung eines störungsfreien und sicheren Betriebs der Website verarbeitet und nicht mit anderen Datenquellen zusammengeführt. Dabei kann eine Übermittlung in die USA stattfinden; GitHub hat sich nach eigenen Angaben dem EU-US Data Privacy Framework angeschlossen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der sicheren und stabilen Bereitstellung der Website). Weitere Informationen: <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub-Datenschutzerklärung</a>.</p>
     <h3>4. Kontaktaufnahme per E-Mail</h3>
-    <p>Wenn Sie mich per E-Mail kontaktieren, werden die von Ihnen mitgeteilten Daten (Ihre E-Mail-Adresse sowie ggf. Name und Nachrichtentext) von mir gespeichert, um Ihre Anfrage zu bearbeiten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung Ihrer Anfrage) bzw. Art. 6 Abs. 1 lit. b DSGVO, sofern die Kontaktaufnahme der Anbahnung eines Vertrags dient. Diese Website selbst speichert keine Formulardaten, da kein Kontaktformular verwendet wird – die Kontaktaufnahme erfolgt ausschließlich über Ihr eigenes E-Mail-Programm.</p>
-
-    <h3>5. Google Fonts</h3>
-    <p>Diese Website nutzt zur einheitlichen Darstellung von Schriftarten sogenannte Google Fonts (Libre Franklin, Space Grotesk), die über Server von Google LLC bzw. Google Ireland Limited eingebunden werden. Beim Aufruf der Website wird dabei eine Verbindung zu Servern von Google hergestellt, wobei Ihre IP-Adresse an Google übertragen werden kann. Google kann diese Daten ggf. in die USA übertragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer technisch einwandfreien und ansprechenden Darstellung der Website). Weitere Informationen finden Sie in der Datenschutzerklärung von Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>.</p>
-
-    <h3>6. Eingebundene YouTube-Videos</h3>
-    <p>Auf dieser Website sind Videos von YouTube (Google Ireland Limited) eingebunden. Beim Abspielen eines Videos wird eine Verbindung zu den Servern von YouTube hergestellt, wobei Daten über Ihr Nutzungsverhalten (u. a. IP-Adresse) an YouTube/Google übertragen und dort ggf. mit Ihrem Google-Konto verknüpft werden können. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>.</p>
-
-    <h3>7. Eingebundene Vimeo-Videos</h3>
-    <p>Auf dieser Website sind Videos der Plattform Vimeo (Vimeo Inc.) eingebunden. Beim Abspielen eines Videos wird eine Verbindung zu den Servern von Vimeo hergestellt, wobei Daten über Ihr Nutzungsverhalten (u. a. IP-Adresse) an Vimeo übertragen werden können. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Weitere Informationen: <a href="https://vimeo.com/privacy" target="_blank" rel="noopener noreferrer">vimeo.com/privacy</a>.</p>
-
-    <h3>8. SSL-/TLS-Verschlüsselung</h3>
-    <p>Diese Website nutzt aus Sicherheitsgründen eine SSL-/TLS-Verschlüsselung zur Übertragung vertraulicher Inhalte, erkennbar an „https://" in der Adresszeile Ihres Browsers.</p>
+    <p>Wenn Sie mich per E-Mail kontaktieren, werden die von Ihnen mitgeteilten Daten (Ihre E-Mail-Adresse sowie ggf. Name und Nachrichtentext) von mir gespeichert, um Ihre Anfrage zu bearbeiten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung Ihrer Anfrage) bzw. Art. 6 Abs. 1 lit. b DSGVO, sofern die Kontaktaufnahme der Anbahnung eines Vertrags dient. Diese Website verwendet kein Kontaktformular; die Kontaktaufnahme erfolgt ausschließlich über Ihr eigenes E-Mail-Programm.</p>
+    <h3>5. Schriftarten</h3>
+    <p>Diese Website verwendet die Schriftarten Space Grotesk und IBM Plex Sans. Sie sind lokal auf dem Server dieser Website eingebunden; beim Aufruf wird keine Verbindung zu Servern Dritter wie Google hergestellt.</p>
+    <h3>6. Speicherung der Spracheinstellung</h3>
+    <p>Wenn Sie zwischen Deutsch und Englisch wechseln, wird Ihre Auswahl im lokalen Speicher Ihres Browsers (localStorage) abgelegt, damit die Seite beim nächsten Besuch in derselben Sprache erscheint. Diese Information verlässt Ihr Gerät nicht und wird nicht an mich oder Dritte übertragen. Die Speicherung ist für die von Ihnen gewünschte Funktion unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Sie können sie jederzeit über die Einstellungen Ihres Browsers löschen. Cookies werden nicht gesetzt.</p>
+    <h3>7. Links zu Vimeo, YouTube, GitHub und LinkedIn</h3>
+    <p>Videos und Spiele sind auf dieser Website nicht eingebettet, sondern nur verlinkt. Erst wenn Sie auf einen Link klicken, öffnet sich die jeweilige Plattform (Vimeo, YouTube, GitHub Pages oder LinkedIn) in einem neuen Tab, und Daten wie Ihre IP-Adresse werden an deren Betreiber übertragen. Für die Verarbeitung dort ist der jeweilige Anbieter verantwortlich: <a href="https://vimeo.com/privacy" target="_blank" rel="noopener">Vimeo</a>, <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">YouTube/Google</a>, <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub</a>, <a href="https://de.linkedin.com/legal/privacy-policy" target="_blank" rel="noopener">LinkedIn</a>.</p>
+    <h3>8. Keine Analyse- oder Tracking-Tools</h3>
+    <p>Diese Website verwendet keine Analyse-, Tracking- oder Werbedienste.</p>
+    <h3>9. SSL-/TLS-Verschlüsselung</h3>
+    <p>Diese Website nutzt aus Sicherheitsgründen eine SSL-/TLS-Verschlüsselung zur Übertragung von Inhalten, erkennbar an „https://“ in der Adresszeile Ihres Browsers.</p>
   </div>
-</div>
+</dialog>
+
 <script>
-(()=>{
-  const $=(s,c=document)=>[...c.querySelectorAll(s)], rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-  let L='de';
+(() => {
+  'use strict';
+  const doc = document.documentElement;
+  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Sprache
-  const T=['Cmyk','Rgb','Hex'],O={de:['Grafikdesign,','Audiovisuals,','KI-Mediengestaltung'],en:['Graphic design,','Audiovisuals,','AI media design']};
-  const tr=$('[data-en]');tr.forEach(e=>e.dataset.de=e.innerHTML);
-  const setLang=l=>{L=l;document.documentElement.lang=l;
-    tr.forEach(e=>e.innerHTML=l==='en'?e.dataset.en:e.dataset.de);
-    const mk='<i class="bl"></i>';ac.innerHTML=am.innerHTML=T.join('<br>')+mk;bc.innerHTML=bm.innerHTML=O[l].join('<br>')+mk;h1.setAttribute('aria-label',O[l].join(' '));
-    $('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===l));
-    $('.lb-x,.gm-x').forEach(b=>b.setAttribute('aria-label',l==='en'?'Close':'Schließen'));
-    try{localStorage.setItem('lang',l)}catch(e){}alignClaim();alignWho()};
-  const ac=document.getElementById('ac'),am=document.getElementById('am'),bc=document.getElementById('bc'),bm=document.getElementById('bm'),h1=document.getElementById('h1');
-  // Claim sitzt auf der Grundlinie der Zeile "KI-Mediengestaltung"
-  const alignClaim=()=>{const m=ac.querySelector('.bl');if(!m)return;
-    document.querySelector('.hg').style.setProperty('--bl',Math.max(0,ac.getBoundingClientRect().bottom-m.getBoundingClientRect().bottom).toFixed(1)+'px')};
-  function alignWho(){if(!document.fonts)return;const bcEl=document.getElementById('bc'),fs=parseFloat(getComputedStyle(bcEl).fontSize),f="500 "+fs+"px 'Space Grotesk','Helvetica Neue',Arial,sans-serif";
-    document.fonts.load(f).then(()=>{const c=document.createElement('canvas').getContext('2d');c.font=f;const m=c.measureText(O[L][0].charAt(0));
-      document.querySelector('.who').style.left=Math.max(0,-m.actualBoundingBoxLeft).toFixed(1)+'px';if(typeof measure==='function')measure()})}
-  addEventListener('resize',alignWho);
-  addEventListener('resize',alignClaim);
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(alignClaim);
-  $('.lang button').forEach(b=>b.onclick=()=>setLang(b.dataset.l));
-  let s0='de';try{s0=localStorage.getItem('lang')||'de'}catch(e){}
-  setLang(s0==='en'?'en':'de');
-
-  // Hero: Federphysik für Naht und Passer, Bewegung nur per translate3d
-  const hero=document.getElementById('hero'),field=document.getElementById('field'),dot=document.getElementById('dot'),hg=document.querySelector('.hg'),lang=document.querySelector('.lang');
-  const P=[[ac,1,0],[am,-1,0],[bc,1,1],[bm,-1,1]];
-  const seam={x:92,v:0},ox={x:0,v:0},oy={x:0,v:0};
-  let tSeam=92,tx=0,ty=0,hw=1,W=1,hgL=0,prog=0,lastR=-1,raf=0,last=0,minS=8,ll=0,lw=1;
-  const who=document.querySelector('.who'),w1=document.getElementById('w1'),w2=document.getElementById('w2');
-  const spring=(o,t,k,c,dt)=>{const n=Math.max(1,Math.ceil(dt*120)),h=dt/n;for(let i=0;i<n;i++){o.v+=(k*(t-o.x)-c*o.v)*h;o.x+=o.v*h}};
-  const rest=(o,t,e)=>Math.abs(o.v)<e&&Math.abs(t-o.x)<e;
-  const tone=()=>{const r=lang.getBoundingClientRect(),x=r.left+r.width/2,e=document.elementFromPoint(x,4);let pink=!!(e&&e.closest('.on-m'));
-    if(e&&e.closest('#hero'))pink=x<hw*seam.x/100;
-    lang.classList.toggle('tt',pink);lang.classList.toggle('lt',!!(e&&e.closest('.on-g')))};
-  function apply(){
-    const a=rm?0:1-prog,dx=ox.x*20*a,dy=oy.x*12*a,sp=seam.x/100*hw,sx=sp-hgL;
-    field.style.transform='translate3d('+seam.x+'%,0,0)';
-    dot.style.transform='translate3d('+sp+'px,0,0)';
-    for(const[el,sg,side]of P){const sh=sg*dx,loc=sx-sh;
-      el.style.transform='translate3d('+sh+'px,'+(sg*dy)+'px,0)';
-      el.style.clipPath=side?'inset(-.3em -2em -.3em '+loc+'px)':'inset(-.3em '+(W-loc)+'px -.3em -2em)'}
-    w1.style.clipPath='inset(-.3em -1em -.3em '+(sp-ll)+'px)';
-    const r=Math.round(seam.x);if(r!==lastR){lastR=r;dot.setAttribute('aria-valuenow',r);tone()}}
-  function frame(now){raf=0;const dt=Math.min(.034,(now-last)/1000||.016);last=now;
-    spring(seam,tSeam,170,16,dt);spring(ox,tx,90,15,dt);spring(oy,ty,90,15,dt);apply();
-    if(!(rest(seam,tSeam,.01)&&rest(ox,tx,.0005)&&rest(oy,ty,.0005)))raf=requestAnimationFrame(frame)}
-  function kick(){if(rm){seam.x=tSeam;apply();return}if(!raf){last=performance.now();raf=requestAnimationFrame(frame)}}
-  const measure=()=>{hw=hero.clientWidth;const r=hg.getBoundingClientRect();W=r.width;hgL=r.left;{const q=who.getBoundingClientRect();ll=q.left;lw=q.width}minS=Math.max(8,(hgL-16)/hw*100);tSeam=clamp(tSeam,minS,92);dot.setAttribute('aria-valuemin',Math.round(minS));kick()};
-  addEventListener('resize',measure);
-  hero.addEventListener('pointermove',e=>{if(rm)return;tx=(e.clientX/innerWidth-.5)*2;ty=(e.clientY/innerHeight-.5)*2;kick()});
-  hero.addEventListener('pointerleave',()=>{tx=0;ty=0;kick()});
-  const heroFade=document.getElementById('heroFade');const onScroll=()=>{prog=clamp(scrollY/(hero.offsetHeight*.8),0,1);if(heroFade){heroFade.style.opacity=prog;const fo=1-prog;hg.style.opacity=fo;dot.style.opacity=fo}tone();if(scrollY<hero.offsetHeight)kick()};
-  addEventListener('scroll',onScroll,{passive:true});
-  dot.addEventListener('pointerdown',e=>{e.preventDefault();dot.setPointerCapture(e.pointerId);
-    const mv=ev=>{tSeam=clamp(ev.clientX/hw*100,minS,92);kick()};dot.addEventListener('pointermove',mv);
-    dot.addEventListener('lostpointercapture',()=>dot.removeEventListener('pointermove',mv),{once:true})});
-  dot.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){tSeam=clamp(tSeam-2,minS,92);kick()}if(e.key==='ArrowRight'){tSeam=clamp(tSeam+2,minS,92);kick()}});
-  measure();onScroll();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
-
-  // Überschriften: gestufter Druck-Wipe
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.4});
-  $('.h').forEach(h=>io.observe(h));
-
-  // Horizontale Streifen: Ziehen + Fortschritt
-  $('.strip').forEach(s=>{
-    const bar=s.nextElementSibling&&s.nextElementSibling.classList.contains('bar')?s.nextElementSibling.firstElementChild:null;
-    const up=()=>{if(bar)bar.style.width=(s.clientWidth+s.scrollLeft)/s.scrollWidth*100+'%'};
-    s.addEventListener('scroll',up,{passive:true});addEventListener('resize',up);up();
-    let d=false,sx=0,sl=0,moved=0;
-    const end=()=>{if(!d)return;d=false;s.classList.remove('drag')};
-    s.addEventListener('dragstart',e=>e.preventDefault());
-    s.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;d=true;moved=0;sx=e.clientX;sl=s.scrollLeft});
-    addEventListener('pointermove',e=>{if(!d)return;if(!(e.buttons&1)){end();return}const dx=e.clientX-sx;moved=Math.abs(dx);if(moved>4)s.classList.add('drag');s.scrollLeft=sl-dx});
-    addEventListener('pointerup',end);addEventListener('pointercancel',end);addEventListener('blur',end);
-    // Zentrierte Streifen beim Laden mittig scrollen, bis der Nutzer selbst scrollt
-    if(s.matches('.s3,#av .strip,#ki .s2')){let touched=false;
-      const ctr=()=>{if(!touched)s.scrollLeft=Math.max(0,(s.scrollWidth-s.clientWidth)/2)};
-      ['pointerdown','wheel','touchstart','keydown'].forEach(t=>s.addEventListener(t,()=>{touched=true},{passive:true}));
-      ctr();addEventListener('resize',ctr);addEventListener('load',ctr);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(ctr)}
-    s.addEventListener('click',e=>{if(moved>4){e.preventDefault();e.stopPropagation();moved=0}},true);
-  });
-
-  // Platzhalter: von der Unterkante nach oben einblenden, beim Scrollen runter und wieder rauf
-  const cio=new IntersectionObserver(es=>{
-    const vis=es.filter(e=>e.intersectionRatio>=.12).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top||a.boundingClientRect.left-b.boundingClientRect.left);
-    vis.forEach((e,i)=>{const c=e.target.querySelector('.card');c.style.setProperty('--d',i*110+'ms');c.classList.add('in')});
-    es.forEach(e=>{if(e.intersectionRatio===0){const c=e.target.querySelector('.card');c.style.setProperty('--d','0ms');c.classList.remove('in','done')}})},
-    {threshold:[0,.12],rootMargin:'0px 0px -6% 0px'});
-  $('.it').forEach(it=>{const c=it.querySelector('.card');c.classList.add('rv');cio.observe(it);
-    const mkDone=()=>{if(c.classList.contains('in'))c.classList.add('done')};
-    c.addEventListener('transitionend',e=>{if(e.target===c&&e.propertyName==='clip-path')mkDone()});
-    // Manche Browser (v. a. Firefox) feuern kein transitionend, wenn die Karte beim Laden bereits sichtbar ist
-    // und kein echter Übergang gemalt wird – ohne dieses Netz bliebe der Hover-Layer dauerhaft kaputt.
-    setTimeout(mkDone,700)});
-
-  // Video-Slots
-  $('.vid').forEach(v=>{
-    const go=()=>{if(v.classList.contains('on'))return;const vim=v.dataset.vimeo,yt=v.dataset.youtube;if(!vim&&!yt)return;v.classList.add('on');
-      v.innerHTML=vim?'<iframe src="https://player.vimeo.com/video/'+vim+'?autoplay=1" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="Video"></iframe>':'<iframe src="https://www.youtube.com/embed/'+yt+'?autoplay=1&rel=0" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen title="Video"></iframe>'};
-    v.onclick=go;v.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
-
-  // Lightboxes (AOK, Digitale Porträts)
-  const setupLb=(lbId,cardSel)=>{
-    const lb=document.getElementById(lbId), card=document.querySelector(cardSel);
-    if(!lb||!card)return;
-    // Bilder der Lightbox erst bei Bedarf laden (beim Überfahren/Fokussieren der Karte oder spätestens beim Öffnen)
-    const loadImgs=()=>lb.querySelectorAll('img[data-src]').forEach(i=>{i.src=i.dataset.src;i.removeAttribute('data-src')});
-    ['pointerenter','focus','touchstart'].forEach(t=>card.addEventListener(t,loadImgs,{once:true,passive:true}));
-    const openLb=()=>{loadImgs();lb.classList.add('open');document.body.style.overflow='hidden';lb.querySelector('.lb-x').focus()};
-    const closeLb=()=>{lb.classList.remove('open');document.body.style.overflow='';card.focus()};
-    card.onclick=openLb;
-    card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openLb()}};
-    lb.querySelector('.lb-x').onclick=closeLb;
-    const upBtn=lb.querySelector('.lb-up');if(upBtn)upBtn.onclick=()=>lb.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
-    lb.addEventListener('click',e=>{if(e.target===lb)closeLb()});
-    addEventListener('keydown',e=>{if(e.key==='Escape'&&lb.classList.contains('open'))closeLb()});
+  /* ---------- i18n DE/EN ---------- */
+  const T = {
+    de: {
+      h1a:'Grafikdesign,', h1c:'KI-Mediengestaltung', photo:'Foto',
+      s2label:'Grafikdesign', s2title:'CMYK, RGB und Hex.',
+      s2l1:'Editorial, Kampagnen und Corporate Design für Print und Screen.',
+      s3l1:'Idee, Konzept, Kamera, Schnitt und Release.',
+      s4label:'KI-Mediengestaltung', s4title:'Prompt. Play. Repeat.',
+      s4l1:'2D-Browser-Games als Teil der KI-Weiterbildung, mit generativer KI konzipiert und gebaut.',
+      card:'Text', card2a:'Corporate Publishing für die AOK.', card2b:'Digitale Corporate-Illustrationen für die AOKs.', card2c:'Online-Auftritte.', card4a:'Ramones-Hommage für den Online-Musikhändler Thomann.', card4b:'Messe-Recruiting-Game für Turkish Airlines.', card3a:'Imagefilm für Extratapete und Modulor GmbH, Berlin.', card3b:'Musikvideo für die Band „R“, freies Projekt.', s5label:'Kontakt', copy:'Kopieren', copied:'Kopiert',
+      bio:'Grafikdesigner in Berlin. Zuvor bei KomPart / AOK-Mediengruppe, Ausbildung an der INACAP, Chile.',
+      privacy:'Datenschutz', privacyTitle:'Datenschutzerklärung', legalNote:'', close:'Schließen',
+      lbName1:'AOK-Geschäftsberichte', lbName2:'Digitale Illustration', lbName3:'Newsletter „AOK Original“', toTop:'Nach oben', contact:'Kontakt', vid1:'Video auf Vimeo ansehen (neuer Tab)', vid2:'Video auf YouTube ansehen (neuer Tab)', gh1:'Beat on the Box – Spiel im Browser starten (neuer Tab)', gh2:'Turkish Airlines Career Game – Spiel im Browser starten (neuer Tab)', photoAlt:'Robin Zuñiga am Fenster. Foto: Valentina Rios', img1:'Geschäftsbericht 2017/2018 der AOK PLUS – Titelgestaltung', img2:'Digitale Illustration auf einem Wacom-Grafiktablett', img3:'AOK Original – Newsletter für Betriebs- und Personalräte', img4:'Schriftzug „Extratapete“ auf einer Wand', img5:'Schwarzweißfoto: Hand mit brennender Wunderkerze', img6:'Geschäftsbericht 2016/2017 der AOK PLUS und Nachhaltigkeitsbericht der AOK Rheinland/Hamburg', img7:'Geschäftsbericht 2021/2022 der AOK Hessen und Magazin MAGNO der AOK Nordost', img8:'Innenseiten des Nachhaltigkeitsberichts der AOK Rheinland/Hamburg', img9:'Porträtseite aus einem AOK-Geschäftsbericht', img10:'Digitales Porträt im Vektorstil, gerahmt an einer Betonwand', img11:'Digitale Porträtzeichnung mit Schraffur', img12:'Digitales Porträt als reduzierte Linienzeichnung', img13:'Digitales Porträt mit Linienraster-Schraffur', img14:'Illustration für AOK Original auf einem Wacom-Grafiktablett', img15:'Newsletter „AOK Original“ auf einem Tablet', img16:'Newsletter „AOK Original“ auf einem Smartphone', img17:'Logo „Beat on the Box“ im Pixel-Stil auf Betonhintergrund', img18:'Turkish Airlines Career Fair Experience – Startseite „Connect your destiny.“', img19:'Gedruckte Porträtillustration im Linienraster-Stil, Detailaufnahme', img20:'Gedruckte farbige Porträtillustration in einem Geschäftsbericht, Detailaufnahme', img21:'Digitale Porträtillustration im Entstehungsprozess, Detail', img22:'Gedruckte Porträtillustration mit Schraffur, Detailaufnahme', img23:'Geprägter Schriftzug „Stark für“ auf einem Geschäftsberichts-Cover, Detailaufnahme', img24:'Infografik „Gesamtvolumen 17.285 Mio. Euro“ in einem AOK-Geschäftsbericht, Detail', img25:'Doppelseite aus dem Magazin MAGNO mit Zitat und Fotos, Detailaufnahme', img26:'Stanzfenster im Cover eines Geschäftsberichts der AOK PLUS, Detail', aiNote:'… und ja, ich habe alles mit KI gemacht.', lbText1:'Editorial Design mit klarem Look & Feel für Geschäftsberichte, Magazine und interne Kommunikation.', lbText2:'Erste Skizzen von Hand, danach mit Illustrator und Photoshop auf einem Wacom-Tablet erstellt. Veröffentlicht in Geschäftsberichten, Magazinen und Online-Medien.', lbText3:'Interaktiver Online-Newsletter mit klarer UX und starken Headlines, entwickelt im neuen AOK-Corporate-Design.'
+    },
+    en: {
+      h1a:'Graphic Design,', h1c:'AI Media Design', photo:'Photo',
+      s2label:'Graphic Design', s2title:'CMYK, RGB and Hex.',
+      s2l1:'Editorial, campaigns and corporate design for print and screen.',
+      s3l1:'Idea, concept, camera, editing and release.',
+      s4label:'AI Media Design', s4title:'Prompt. Play. Repeat.',
+      s4l1:'2D browser games created as part of AI training, conceived and built with generative AI.',
+      card:'Text', card2a:'Corporate publishing for AOK.', card2b:'Digital corporate illustrations for the AOKs.', card2c:'Online presence.', card4a:'A Ramones homage for online music retailer Thomann.', card4b:'Trade fair recruiting game for Turkish Airlines.', card3a:'Corporate film for Extratapete and Modulor GmbH, Berlin.', card3b:'Music video for the band “R”, personal project.', s5label:'Contact', copy:'Copy', copied:'Copied',
+      bio:'Graphic designer based in Berlin. Previously at KomPart / AOK media group, trained at INACAP, Chile.',
+      privacy:'Privacy', privacyTitle:'Privacy Policy', legalNote:'This legal information is provided in German only.', close:'Close',
+      lbName1:'AOK annual reports', lbName2:'Digital illustration', lbName3:'AOK Original newsletter', toTop:'Back to top', contact:'Contact', vid1:'Watch video on Vimeo (new tab)', vid2:'Watch video on YouTube (new tab)', gh1:'Beat on the Box – play in the browser (new tab)', gh2:'Turkish Airlines Career Game – play in the browser (new tab)', photoAlt:'Robin Zuñiga by a window. Photo: Valentina Rios', img1:'AOK PLUS annual report 2017/2018 – cover design', img2:'Digital illustration on a Wacom pen display', img3:'AOK Original – newsletter for works councils', img4:'“Extra Tapete” lettering on a wall', img5:'Black-and-white photo: hand holding a lit sparkler', img6:'AOK PLUS annual report 2016/2017 and AOK Rheinland/Hamburg sustainability report', img7:'AOK Hessen annual report 2021/2022 and MAGNO magazine for AOK Nordost', img8:'Inside spread of the AOK Rheinland/Hamburg sustainability report', img9:'Portrait page from an AOK annual report', img10:'Vector-style digital portrait, framed on a concrete wall', img11:'Digital portrait drawing with hatching', img12:'Digital portrait in reduced line art', img13:'Digital portrait with engraving-style line hatching', img14:'Illustration for AOK Original on a Wacom pen display', img15:'AOK Original newsletter on a tablet', img16:'AOK Original newsletter on a smartphone', img17:'“Beat on the Box” pixel-style logo on a concrete background', img18:'Turkish Airlines Career Fair Experience – “Connect your destiny.” landing page', img19:'Printed portrait illustration in engraving style, close-up', img20:'Printed colour portrait illustration in an annual report, close-up', img21:'Digital portrait illustration in progress, detail', img22:'Printed portrait illustration with hatching, close-up', img23:'Embossed “Stark für” lettering on an annual report cover, close-up', img24:'Infographic “Gesamtvolumen 17.285 Mio. Euro” in an AOK annual report, detail', img25:'Spread from MAGNO magazine with pull quote and photos, close-up', img26:'Die-cut window in the AOK PLUS annual report cover, detail', aiNote:'…and yes, i did it all with A.I.', lbText1:'Editorial design with a clear look & feel for annual reports, magazines and internal communications.', lbText2:'First sketches by hand, then created in Illustrator and Photoshop on a Wacom tablet. Published in annual reports, magazines and online media.', lbText3:'Interactive online newsletter with clear UX and strong headlines, developed in the new AOK corporate design.'
+    }
   };
-  setupLb('lbAok','.card.mg');
-  setupLb('lbPortraits','.card.gr');
-  setupLb('lbMeistersaal','.card.ms');
-
-  // Impressum / Datenschutz (Footer-Links)
-  const setupSimpleLb=(lbId,linkId)=>{
-    const lb=document.getElementById(lbId), link=document.getElementById(linkId);
-    if(!lb||!link)return;
-    const openLb=()=>{lb.classList.add('open');document.body.style.overflow='hidden';lb.querySelector('.lb-x').focus()};
-    const closeLb=()=>{lb.classList.remove('open');document.body.style.overflow='';link.focus()};
-    link.onclick=e=>{e.preventDefault();openLb()};
-    lb.querySelector('.lb-x').onclick=closeLb;
-    lb.addEventListener('click',e=>{if(e.target===lb)closeLb()});
-    addEventListener('keydown',e=>{if(e.key==='Escape'&&lb.classList.contains('open'))closeLb()});
+  let lang = 'de';
+  const setLang = (l) => {
+    if (!T[l]) return;
+    lang = l; doc.lang = l;
+    $$('[data-i18n]').forEach(el => { const v = T[l][el.dataset.i18n]; if (v != null) el.textContent = v; });
+    $$('[data-i18n-aria]').forEach(el => { const v = T[l][el.dataset.i18nAria]; if (v != null) el.setAttribute('aria-label', v); });
+    $$('[data-i18n-alt]').forEach(el => { const v = T[l][el.dataset.i18nAlt]; if (v != null) el.alt = v; });
+    $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
+    try { localStorage.setItem('lang', l); } catch (e) {}
+    document.dispatchEvent(new Event('langchange'));
   };
-  // Spiel "Connect Your Destiny": öffnet in einer Ebene auf dieser Seite. Der Klick auf die Karte gilt so auch für das
-  // Spiel als Nutzer-Interaktion – Startmusik und Intro-Video laufen sofort mit Ton (in neuen Tabs blockieren Browser das).
-  const gameLayer=document.getElementById('gameLayer'),gameCard=document.querySelector('a.card[href*="Turkish-Airlines-Game"]');
-  if(gameLayer&&gameCard){
-    const openGame=e=>{if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();
-      if(gameLayer.classList.contains('open'))return;
-      const f=document.createElement('iframe');f.src=gameCard.href;f.title='Connect Your Destiny';f.allow='autoplay; fullscreen';
-      f.addEventListener('load',()=>{try{f.focus()}catch(_){}},{once:true});
-      gameLayer.appendChild(f);gameLayer.classList.add('open');document.body.style.overflow='hidden'};
-    const closeGame=()=>{if(!gameLayer.classList.contains('open'))return;gameLayer.classList.remove('open');document.body.style.overflow='';
-      const f=gameLayer.querySelector('iframe');if(f)f.remove();gameCard.focus({preventScroll:true})};
-    gameCard.addEventListener('click',openGame);gameLayer.querySelector('.gm-x').onclick=closeGame;
-    addEventListener('keydown',e=>{if(e.key==='Escape')closeGame()});
+  let stored = null;
+  try { stored = localStorage.getItem('lang'); } catch (e) {}
+  setLang(stored || 'de');
+  $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+
+  /* ---------- Reveal al hacer scroll ---------- */
+  if ('IntersectionObserver' in window && !reduce) {
+    $$('.band').forEach(sec => $$('.rv', sec).forEach((el, i) => el.style.setProperty('--i', i)));
+    doc.classList.add('js-rv');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+    $$('.rv').forEach(el => io.observe(el));
+    // Al llegar al final de la página se revela lo que quede (p. ej. el footer pegado al borde inferior).
+    const revealRest = () => {
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4)
+        $$('.rv:not(.is-in)').forEach(el => { el.classList.add('is-in'); io.unobserve(el); });
+    };
+    addEventListener('scroll', revealRest, { passive: true });
+    revealRest();
   }
 
-  setupSimpleLb('lbImpressum','impressumLink');
-  setupSimpleLb('lbDatenschutz','datenschutzLink');
+  /* ---------- Sombra del header: aparece con el Hero oculto en un 80 % ---------- */
+  (() => {
+    const bar = document.querySelector('.topbar'), hero = document.getElementById('s1');
+    if (!bar || !hero) return;
+    let t = 0;
+    const update = () => { t = 0; bar.classList.toggle('is-shadow', scrollY >= hero.offsetHeight * 0.8); };
+    addEventListener('scroll', () => { if (!t) t = requestAnimationFrame(update); }, { passive: true });
+    addEventListener('resize', update, { passive: true });
+    update();
+  })();
 
-  // Slider (Meistersaal)
-  const setupSlider=(root)=>{
-    const track=root.querySelector('.sld-track'), slides=$('.sld-slide',root);
-    const prev=root.querySelector('.sld-nav.prev'), next=root.querySelector('.sld-nav.next'), dots=root.querySelector('.sld-dots');
-    if(!track||!slides.length)return;
-    let i=0;
-    slides.forEach((_,idx)=>{
-      const d=document.createElement('button');
-      d.type='button';d.setAttribute('role','tab');d.setAttribute('aria-label',`Bild ${idx+1}`);
-      d.onclick=()=>go(idx);
-      dots.appendChild(d);
-    });
-    const dotEls=$('.sld-dots button',root);
-    const render=()=>{
-      track.style.transform=`translateX(-${i*100}%)`;
-      dotEls.forEach((d,idx)=>d.setAttribute('aria-current',idx===i?'true':'false'));
-      prev.disabled=i===0;next.disabled=i===slides.length-1;
+  /* ---------- Parallax sutil (solo transform) ---------- */
+  const px = $$('[data-parallax]');
+  if (px.length && !reduce) {
+    const k = parseFloat(getComputedStyle(doc).getPropertyValue('--parallax')) || 0.08;
+    let ticking = false;
+    const update = () => {
+      const vh = innerHeight;
+      px.forEach(el => {
+        const r = el.parentElement.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        const off = (r.top + r.height / 2 - vh / 2) * -k;
+        el.style.transform = `translate3d(0,${off.toFixed(1)}px,0)`;
+      });
+      ticking = false;
     };
-    const go=(n)=>{i=Math.max(0,Math.min(slides.length-1,n));render()};
-    prev.onclick=()=>go(i-1);
-    next.onclick=()=>go(i+1);
-    root.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(i-1);else if(e.key==='ArrowRight')go(i+1)});
-    render();
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  /* ---------- Lightbox de proyectos ---------- */
+  const lbDur = (parseFloat(getComputedStyle(doc).getPropertyValue('--dur-lb')) || .5) * 1000;
+  const openLb = (id) => {
+    const d = document.getElementById(id);
+    if (!d || !d.showModal || d.open) return;
+    d.scrollTop = 0; d.showModal(); doc.classList.add('lb-lock');
   };
-  $('.sld').forEach(setupSlider);
+  const closeLb = (d) => {
+    if (!d.open || d.classList.contains('is-closing')) return;
+    if (reduce) { d.close(); return; }
+    d.classList.add('is-closing');
+    setTimeout(() => { d.classList.remove('is-closing'); d.close(); }, lbDur);
+  };
+  $$('.lb').forEach(d => {
+    d.addEventListener('cancel', (e) => { e.preventDefault(); closeLb(d); });   // tecla Esc, con animación
+    d.addEventListener('close', () => doc.classList.remove('lb-lock'));
+    d.querySelector('[data-lb-close]').addEventListener('click', () => closeLb(d));
+    d.querySelector('[data-lb-top]').addEventListener('click', () => d.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+  });
+  $$('[data-lb]').forEach(c => c.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(c.dataset.lb); }
+  }));
+
+  /* ---------- Tarjetas: tap en táctil muestra el overlay ---------- */
+  const cards = $$('.media');
+  cards.forEach(c => c.addEventListener('click', (e) => {
+    if (c.dataset.lb) { openLb(c.dataset.lb); return; }      // sección 02: abre el lightbox
+    if (matchMedia('(hover: hover)').matches) return;          // mouse: lo resuelve :hover
+    const on = !c.classList.contains('is-active');
+    cards.forEach(o => o.classList.remove('is-active'));
+    c.classList.toggle('is-active', on);
+    e.stopPropagation();
+  }));
+  document.addEventListener('click', () => cards.forEach(o => o.classList.remove('is-active')));
+
+  /* ---------- Volver arriba (footer) ---------- */
+  document.getElementById('to-top').addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+
+  /* ---------- Footer: animación "decodificación IA" (ciclo de 9 s) ----------
+     Cada letra pasa por símbolos aleatorios y se fija de izquierda a derecha.
+     Solo corre si el texto está en pantalla. */
+  (() => {
+    const note = document.querySelector('.foot__note');
+    if (!note) return;
+    const src = note.querySelector('[data-i18n="aiNote"]'), box = note.querySelector('.ai-anim');
+    const GLYPHS = '01#%&*+=/\\<>[]{}?!$@';
+    let chars = [];
+    const build = () => {
+      box.textContent = ''; chars = [];
+      const words = src.textContent.split(' ');
+      words.forEach((word, wi) => {
+        const w = document.createElement('span'); w.className = 'w';
+        for (const ch of word) { const c = document.createElement('span'); c.className = 'c'; c.textContent = ch; w.appendChild(c); chars.push(c); }
+        box.appendChild(w);
+        if (wi < words.length - 1) box.appendChild(document.createTextNode(' '));
+      });
+    };
+    build();
+    document.addEventListener('langchange', build);
+    if (reduce || !('IntersectionObserver' in window)) return;
+
+    const CYCLE = 9000, WAVE = 1000, SCRAMBLE = 280, HOP = 320;   // se repite cada 9 s
+    let start = performance.now(), visible = false, raf = 0, lastGlyph = 0;
+    const tick = (now) => {
+      if (!visible || document.hidden) { raf = 0; return; }
+      const t = (now - start) % CYCLE, n = chars.length;
+      const step = (WAVE - SCRAMBLE) / Math.max(1, n - 1);
+      const reglyph = now - lastGlyph > 55; if (reglyph) lastGlyph = now;
+      chars.forEach((c, i) => {
+        const t0 = i * step;
+        const scr = t >= t0 && t < t0 + SCRAMBLE;
+        const hop = t >= t0 + SCRAMBLE && t < t0 + SCRAMBLE + HOP;
+        if (scr && (reglyph || !c.classList.contains('s'))) c.dataset.g = GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        if (c.classList.contains('s') !== scr) c.classList.toggle('s', scr);
+        if (c.classList.contains('h') !== hop) c.classList.toggle('h', hop);
+      });
+      raf = requestAnimationFrame(tick);
+    };
+    new IntersectionObserver((e) => {
+      visible = e[0].isIntersecting;
+      if (visible && !raf) { start = performance.now(); raf = requestAnimationFrame(tick); }
+    }).observe(note);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && visible && !raf) raf = requestAnimationFrame(tick); });
+  })();
+
+  /* ---------- Impressum / Datenschutz ---------- */
+  $$('[data-dialog]').forEach(b => b.addEventListener('click', () => {
+    const d = document.getElementById(b.dataset.dialog);
+    if (d && d.showModal) d.showModal();
+  }));
+  $$('.legal').forEach(d => {
+    d.addEventListener('click', (e) => { if (e.target === d || e.target.closest('[data-close]')) d.close(); });
+  });
 })();
 </script>
 </body>
