@@ -67,6 +67,8 @@
   --reveal-y:      48px;    /* recorrido hacia arriba de textos y contenedores */
   --stagger:       .1s;
   --dur-lb:        .5s;     /* apertura/cierre del lightbox */
+  --hero-fade-end:  .9;     /* el hero termina de esfumarse al recorrer el 90 % de su alto */
+  --hero-parallax:  .35;    /* el hero sube 35 % más lento que el scroll mientras se esfuma */
   --parallax:      .08;     /* intensidad del parallax */
 
   color-scheme: light;
@@ -163,6 +165,8 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
   .hero{height:calc(100vh - var(--topbar-h)); height:calc(100svh - var(--topbar-h)); min-height:460px}   /* mobile: la pantalla menos el header */
 }
 .hero .wrap{max-width:none; justify-content:center; align-items:center}
+/* Hero: se esfuma y sube más lento que el scroll (opacity/transform los pone el JS) */
+.hero__group.is-fading{will-change:opacity, transform}
 .hero__group{display:flex; flex-direction:column; align-items:center; gap:clamp(20px,3vw,32px); width:100%; height:100%; min-height:0}
 .hero__text{container-type:inline-size; width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; gap:clamp(14px,2vw,22px); min-width:0}
 .hero h1{
@@ -898,6 +902,36 @@ html.js-rv .rv.is-in{opacity:1; transform:none}
     addEventListener('resize', update, { passive: true });
     update();
   }
+
+  /* ---------- Hero: fade + parallax suave al hacer scroll (sigue al scroll, reversible) ---------- */
+  (() => {
+    const hero = document.getElementById('s1'), grp = hero && hero.querySelector('.hero__group');
+    if (!grp) return;
+    const rs = getComputedStyle(document.documentElement);
+    const END = parseFloat(rs.getPropertyValue('--hero-fade-end')) || .9;
+    const PAR = parseFloat(rs.getPropertyValue('--hero-parallax')) || .35;
+    const calm = matchMedia('(prefers-reduced-motion: reduce)');
+    const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;   // ease-in-out
+    let ticking = false, shift = 0;
+    const update = () => {
+      ticking = false;
+      const h = hero.offsetHeight || 1, y = Math.max(0, window.scrollY || window.pageYOffset || 0);
+      if (y > h * 1.2) { if (grp.style.opacity !== '0') { grp.style.opacity = '0'; grp.style.pointerEvents = 'none'; } return; }
+      const p = Math.min(1, y / (h * END));
+      grp.style.opacity = String(1 - ease(p));
+      // El desplazamiento nunca deja que el hero toque el título de la sección 02 (importante en celulares)
+      const gb = grp.getBoundingClientRect().bottom - shift, nx = hero.nextElementSibling;
+      const nh = nx && (nx.querySelector('.head') || nx), room = nh ? nh.getBoundingClientRect().top - gb - 24 : 0;
+      shift = (calm.matches || p === 0) ? 0 : Math.max(0, Math.min(y * PAR, room));
+      grp.style.transform = shift ? 'translate3d(0,' + shift.toFixed(1) + 'px,0)' : '';
+      grp.style.pointerEvents = p > .95 ? 'none' : '';
+      grp.classList.toggle('is-fading', p > 0 && p < 1);
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    update();
+  })();
 
   /* ---------- Crédito de la foto: link sobre el texto impreso en la imagen ---------- */
   (() => {
